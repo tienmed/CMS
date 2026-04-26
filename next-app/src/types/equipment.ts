@@ -30,4 +30,6 @@ export interface EquipmentItem {
     condition_reject_msg?: string;
     usage_count?: number;
     is_recommended?: boolean;
+    equipment_name?: string;
+    status_name?: string;
 }

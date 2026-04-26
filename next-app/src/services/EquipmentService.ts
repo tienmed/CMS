@@ -86,7 +86,7 @@ class EquipmentService {
      * Lấy danh sách toàn bộ mẫu vật có thể cho mượn (đang ở trạng thái is_rentable = 1)
      * Kèm theo thống kê sử dụng và gợi ý thông minh
      */
-    async getRentableItems(): Promise<EquipmentItem[]> {
+    async getRentableItems(): Promise<(EquipmentItem & { equipment_name: string; status_name: string; condition_name: string; condition_reject_msg: string })[]> {
         try {
             const [rows] = await pool.query(`
                 SELECT ei.*, e.name as equipment_name, 
@@ -122,7 +122,7 @@ class EquipmentService {
             return items.map(item => ({
                 ...item,
                 is_recommended: equipmentCounts[item.equipment_id] > 1 && (item.usage_count || 0) === minUsageByEquipment[item.equipment_id]
-            }));
+            })) as any;
         } catch (err) {
             throw new AppError('Không thể lấy danh sách mẫu vật sẵn sàng', 500, 'DB_QUERY_ERROR');
         }
