@@ -1,4 +1,4 @@
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   res.status(200).json({
     ok: true,
     service: "cms-mcp",
@@ -10,4 +10,4 @@ export default function handler(req, res) {
       hasMysqlUrl: Boolean(process.env.MYSQL_URL || process.env.DATABASE_URL)
     }
   });
-}
+};
