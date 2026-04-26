@@ -23,4 +23,11 @@ export interface EquipmentItem {
     created_at?: Date;
     updated_at?: Date;
     deleted_at?: Date;
+    // Hồ sơ mở rộng từ join
+    status_is_rentable?: boolean | number;
+    condition_is_rentable?: boolean | number;
+    condition_name?: string;
+    condition_reject_msg?: string;
+    usage_count?: number;
+    is_recommended?: boolean;
 }

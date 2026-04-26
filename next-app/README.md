@@ -1,36 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hệ thống Quản lý Thiết bị CECICS (CECICS Equipment Management System)
 
-## Getting Started
+## Giới thiệu
+Hệ thống Quản lý Thiết bị CECICS là một giải pháp chuyển đổi số toàn diện nhằm tối ưu hóa vòng đời vận hành của các mô hình và thiết bị đào tạo y khoa tại Trung tâm CECICS - Trường Đại học Y khoa Phạm Ngọc Thạch. 
 
-First, run the development server:
+Dự án này thay thế quy trình quản lý bằng giấy tờ truyền thống bằng một nền tảng dữ liệu hiện đại, giúp tăng cường tính minh bạch, chính xác và hiệu quả trong việc sử dụng tài sản công.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Mục tiêu Dự án
+*   **Số hóa toàn diện:** Chuyển đổi mọi giao dịch mượn, trả và vận hành tại chỗ sang quy trình số thông qua công nghệ quét mã QR.
+*   **Tối ưu hóa tài sản:** Sử dụng thuật toán luân chuyển thông minh (Wear-leveling) để cân bằng tần suất sử dụng, kéo dài tuổi thọ cho thiết bị.
+*   **Báo cáo tức thì:** Cung cấp các chỉ số vận hành real-time giúp ban lãnh đạo đưa ra quyết định dựa trên dữ liệu.
+*   **Trải nghiệm người dùng cao cấp:** Giao diện hiện đại, tối giản và hiệu năng cao, tối ưu cho cả máy tính và đầu đọc barcode.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Các tính năng then chốt
+*   **Quản lý Mượn/Trả Đa phiên:** Cho phép trả thiết bị nhiều lần cho một phiếu mượn, phù hợp với thực tế sử dụng.
+*   **Hệ thống In ấn Thống nhất:** Mẫu phiếu A4 chuyên nghiệp theo tiêu chuẩn hành chính, tích hợp theo dõi toàn bộ vòng đời thiết bị.
+*   **QR Hands-free Tracking:** Cơ chế quét mã rảnh tay, tự động xác thực và phản hồi thời gian thực.
+*   **Smart Kit Management:** Quản lý thiết bị theo bộ và gợi ý lựa chọn thông minh để tối ưu hiệu suất sử dụng.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Hệ thống được phát triển với tinh thần tập trung vào Hiệu năng - Bảo mật - Khả năng mở rộng bền vững.

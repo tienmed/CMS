@@ -1,6 +1,7 @@
 'use server';
 
 import { rentalService } from '@/services/RentalService';
+import { equipmentService } from '@/services/EquipmentService';
 import { revalidatePath } from 'next/cache';
 import { RentalTicket } from '@/types/rental';
 
@@ -22,8 +23,12 @@ export async function createRentalTicketAction(
     }
 }
 
-export async function returnRentalTicketAction(ticketId: number) {
-    // Không dùng nữa, chuyển sang returnItemsAction
+export async function validateBarcodeAction(barcode: string) {
+    try {
+        return await equipmentService.checkItemAvailability(barcode);
+    } catch (err: any) {
+        return { available: false, error: err.message };
+    }
 }
 
 export async function getTicketDetailsAction(ticketId: number) {

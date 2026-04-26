@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, CheckCircle2, RotateCcw, AlertTriangle, Loader2, Check, Package, QrCode } from 'lucide-react';
+import { X, CheckCircle2, RotateCcw, AlertTriangle, Loader2, Check, Package, QrCode, Camera } from 'lucide-react';
+import QRScanner from '../common/QRScanner';
 import { cn } from '@/lib/utils';
 import { UsageHistory } from '@/types/rental';
 import { getTicketDetailsAction, returnItemsAction } from '@/app/actions/rental';
 import TicketPrintView from '@/components/rental/TicketPrintView';
-import ReturnTicketPrintView from '@/components/rental/ReturnTicketPrintView';
 
 interface ReturnTicketModalProps {
     ticketId: number;
@@ -22,33 +22,33 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
     const [selectedDetailIds, setSelectedDetailIds] = useState<number[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [showPrintView, setShowPrintView] = useState(false);
-    const [showReturnTicket, setShowReturnTicket] = useState(false);
     const [sessionCount, setSessionCount] = useState(1);
-    const [lastReturnedDetails, setLastReturnedDetails] = useState<number[]>([]);
     const [scanValue, setScanValue] = useState('');
     const [scanWarning, setScanWarning] = useState<string | null>(null);
+    const [isScanning, setIsScanning] = useState(false);
 
     const scanInputRef = useRef<HTMLInputElement>(null);
 
+    const fetchDetails = async () => {
+        setLoading(true);
+        const data = await getTicketDetailsAction(ticketId);
+        setTicket(data);
+        setLoading(false);
+    };
+
     useEffect(() => {
-        async function fetchDetails() {
-            setLoading(true);
-            const data = await getTicketDetailsAction(ticketId);
-            setTicket(data);
-            setLoading(false);
-        }
         fetchDetails();
     }, [ticketId]);
 
     // Luôn focus vào input scan để rảnh tay
     useEffect(() => {
         const interval = setInterval(() => {
-            if (document.activeElement?.tagName !== 'INPUT' && !showPrintView && !showReturnTicket) {
+            if (document.activeElement?.tagName !== 'INPUT' && !showPrintView) {
                 scanInputRef.current?.focus();
             }
         }, 1000);
         return () => clearInterval(interval);
-    }, [showPrintView, showReturnTicket]);
+    }, [showPrintView]);
 
     const handleScan = (e: React.FormEvent) => {
         e.preventDefault();
@@ -72,6 +72,27 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
         setScanValue('');
     };
 
+    const handleQRScan = (barcode: string) => {
+        setIsScanning(false);
+        if (!barcode || !ticket) return;
+
+        const term = barcode.trim();
+        const item = ticket.items.find(i => i.barcode_stt === term);
+
+        if (!item) {
+            setScanWarning(`Mã "${term}" không có trong phiếu!`);
+            setTimeout(() => setScanWarning(null), 3000);
+        } else if (item.returned_at) {
+            setScanWarning(`"${item.equipment_name}" đã được trả.`);
+            setTimeout(() => setScanWarning(null), 3000);
+        } else {
+            if (!selectedDetailIds.includes(item.detail_id!)) {
+                setSelectedDetailIds(prev => [...prev, item.detail_id!]);
+            }
+            setScanWarning(null);
+        }
+    };
+
     const toggleItem = (detailId: number) => {
         setSelectedDetailIds(prev =>
             prev.includes(detailId)
@@ -89,9 +110,12 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
         const result = await returnItemsAction(ticketId, selectedDetailIds) as any;
 
         if (result.success) {
-            setLastReturnedDetails([...selectedDetailIds]);
+            // Tải lại dữ liệu phiếu để có thông tin trả mới nhất
             setSessionCount(result.sessionCount || 1);
-            setShowReturnTicket(true);
+            await fetchDetails();
+            setSelectedDetailIds([]);
+            setShowPrintView(true);
+            setSubmitting(false);
             if (onSuccess) onSuccess();
         } else {
             setError(result.error || 'Đã có lỗi xảy ra');
@@ -99,14 +123,9 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
         }
     };
 
-    const handleCloseReturnTicket = () => {
-        setShowReturnTicket(false);
-        onClose();
-    };
-
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 slide-in-from-bottom-10 duration-500 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-0 md:p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="bg-white md:rounded-[2.5rem] shadow-2xl w-full h-full md:h-auto md:max-w-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 md:slide-in-from-bottom-10 duration-500 flex flex-col md:max-h-[90vh]">
 
                 {/* Header */}
                 <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
@@ -116,7 +135,7 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
                         </div>
                         <div>
                             <h4 className="text-2xl font-black text-slate-900 tracking-tight">Ghi nhận trả thiết bị</h4>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mt-0.5">Số phiếu: {ticketNo}</p>
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mt-0.5">Số phiếu mượn: {ticketNo}</p>
                         </div>
                     </div>
                     <button
@@ -130,27 +149,37 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
                 {/* Scanner Input Area */}
                 {!loading && ticket && (
                     <div className="px-8 pt-6 pb-2">
-                        <form onSubmit={handleScan} className="relative group">
-                            <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                                <QrCode className={cn("w-6 h-6 transition-colors", scanWarning ? "text-red-500" : "text-emerald-500")} />
-                            </div>
-                            <input
-                                ref={scanInputRef}
-                                type="text"
-                                value={scanValue}
-                                onChange={(e) => setScanValue(e.target.value)}
-                                placeholder="Quét mã thiết bị để trả rảnh tay..."
-                                className={cn(
-                                    "w-full bg-slate-100 border-2 border-transparent focus:bg-white focus:border-emerald-500 rounded-2xl py-5 pl-14 pr-6 text-base font-bold transition-all shadow-inner placeholder:text-slate-400 placeholder:font-medium outline-none",
-                                    scanWarning && "border-red-400 bg-red-50 focus:border-red-500"
-                                )}
-                            />
-                            {scanWarning && (
-                                <div className="absolute -bottom-4 right-4 bg-red-500 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider animate-bounce shadow-lg ring-4 ring-white">
-                                    {scanWarning}
+                        <div className="flex gap-2">
+                            <form onSubmit={handleScan} className="relative group flex-1">
+                                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                                    <QrCode className={cn("w-6 h-6 transition-colors", scanWarning ? "text-red-500" : "text-emerald-500")} />
                                 </div>
-                            )}
-                        </form>
+                                <input
+                                    ref={scanInputRef}
+                                    type="text"
+                                    value={scanValue}
+                                    onChange={(e) => setScanValue(e.target.value)}
+                                    placeholder="Quét mã trả rảnh tay..."
+                                    className={cn(
+                                        "w-full bg-slate-100 border-2 border-transparent focus:bg-white focus:border-emerald-500 rounded-2xl py-5 pl-14 pr-6 text-base font-bold transition-all shadow-inner placeholder:text-slate-400 placeholder:font-medium outline-none",
+                                        scanWarning && "border-red-400 bg-red-50 focus:border-red-500"
+                                    )}
+                                />
+                                {scanWarning && (
+                                    <div className="absolute -bottom-4 right-4 bg-red-500 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider animate-bounce shadow-lg ring-4 ring-white">
+                                        {scanWarning}
+                                    </div>
+                                )}
+                            </form>
+                            <button
+                                type="button"
+                                onClick={() => setIsScanning(true)}
+                                className="p-5 bg-emerald-600 text-white rounded-2xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all flex items-center justify-center"
+                                title="Bật Camera Quét"
+                            >
+                                <Camera className="w-5 h-5" />
+                            </button>
+                        </div>
                     </div>
                 )}
 
@@ -164,7 +193,7 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
                         <div className="space-y-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Người mượn</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Người trả</span>
                                     <p className="text-sm font-bold text-slate-900">{ticket.renter}</p>
                                 </div>
                                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
@@ -263,7 +292,7 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
                             onClick={() => setShowPrintView(true)}
                             className="px-6 py-3.5 rounded-2xl font-black text-sm text-blue-600 hover:bg-blue-50 transition-all uppercase tracking-widest flex items-center gap-2"
                         >
-                            Xem phiếu mượn
+                            Xem phiếu trả
                         </button>
                         <button
                             type="button"
@@ -296,16 +325,16 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
             {showPrintView && ticket && (
                 <TicketPrintView
                     ticket={ticket}
+                    mode="return"
+                    sessionCount={sessionCount}
                     onClose={() => setShowPrintView(false)}
                 />
             )}
 
-            {showReturnTicket && ticket && (
-                <ReturnTicketPrintView
-                    ticket={ticket}
-                    returnedDetailIds={lastReturnedDetails}
-                    sessionCount={sessionCount}
-                    onClose={handleCloseReturnTicket}
+            {isScanning && (
+                <QRScanner
+                    onScanSuccess={handleQRScan}
+                    onClose={() => setIsScanning(false)}
                 />
             )}
         </div>

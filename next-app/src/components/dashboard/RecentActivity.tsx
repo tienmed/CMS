@@ -27,7 +27,7 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
     };
 
     return (
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.02)] overflow-hidden transition-all duration-500">
             <div className="flex items-center justify-between mb-8">
                 <h3 className="font-bold text-slate-900 text-xl flex items-center gap-3">
                     <div className="p-2 bg-blue-50 rounded-xl">
@@ -92,16 +92,16 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
 
             {/* Detail Modal */}
             {selectedTicket && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[80vh]">
-                        <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xl animate-in fade-in duration-300">
+                    <div className="bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)] w-full max-w-3xl overflow-hidden border border-white/40 animate-in zoom-in-95 duration-300 flex flex-col max-h-[85vh]">
+                        <div className="p-10 border-b border-slate-100/50 bg-white/40 flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-200">
                                     <FileText className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
                                     <h4 className="text-xl font-black text-slate-900 tracking-tight">Chi tiết phiếu mượn</h4>
-                                    <p className="text-sm font-mono font-bold text-blue-600">{selectedTicket.ticket_no}</p>
+                                    <p className="text-sm font-mono font-bold text-blue-600">{selectedTicket!.ticket_no}</p>
                                 </div>
                             </div>
                             <button
@@ -120,21 +120,21 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
                                         <Calendar className="w-4 h-4" />
                                         <span className="text-[10px] font-black uppercase tracking-widest leading-none">Ngày mượn</span>
                                     </div>
-                                    <p className="font-bold text-slate-900">{isMounted ? new Date(selectedTicket.date).toLocaleString('vi-VN') : ""}</p>
+                                    <p className="font-bold text-slate-900">{isMounted ? new Date(selectedTicket!.date).toLocaleString('vi-VN') : ""}</p>
                                 </div>
                                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
                                     <div className="flex items-center gap-2 text-slate-400">
                                         <User className="w-4 h-4" />
                                         <span className="text-[10px] font-black uppercase tracking-widest leading-none">Người mượn</span>
                                     </div>
-                                    <p className="font-bold text-slate-900">{selectedTicket.renter}</p>
+                                    <p className="font-bold text-slate-900">{selectedTicket!.renter}</p>
                                 </div>
                                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
                                     <div className="flex items-center gap-2 text-slate-400">
                                         <Building2 className="w-4 h-4" />
                                         <span className="text-[10px] font-black uppercase tracking-widest leading-none">Bộ môn</span>
                                     </div>
-                                    <p className="font-bold text-slate-900">{selectedTicket.department_name}</p>
+                                    <p className="font-bold text-slate-900">{selectedTicket!.department_name}</p>
                                 </div>
                             </div>
 
@@ -144,7 +144,7 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
                                     <Info className="w-5 h-5 text-blue-500 shrink-0" />
                                     <div>
                                         <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-1">Ghi chú phiếu</span>
-                                        <p className="text-sm text-slate-700 font-medium">{selectedTicket.note}</p>
+                                        <p className="text-sm text-slate-700 font-medium">{selectedTicket?.note}</p>
                                     </div>
                                 </div>
                             )}
@@ -153,7 +153,7 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
                             <div className="space-y-4">
                                 <h5 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2 px-1">
                                     <Package className="w-4 h-4 text-blue-500" />
-                                    Danh sách thiết bị ({selectedTicket.items.length})
+                                    Danh sách thiết bị ({selectedTicket!.items.length})
                                 </h5>
                                 <div className="overflow-hidden rounded-2xl border border-slate-200">
                                     <table className="w-full text-left border-collapse">
@@ -166,7 +166,7 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {selectedTicket.items.map((item, idx) => (
+                                            {selectedTicket!.items.map((item, idx) => (
                                                 <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
                                                     <td className="py-4 px-6">
                                                         <span className="text-sm font-bold text-slate-800 tracking-tight">{item.equipment_name}</span>
@@ -201,7 +201,7 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
                                     className="px-6 py-3 rounded-2xl font-black text-sm text-blue-600 hover:bg-blue-50 transition-all uppercase tracking-widest flex items-center gap-2"
                                 >
                                     <FileText className="w-4 h-4" />
-                                    Xem phiếu để in
+                                    Xem phiếu theo dõi
                                 </button>
                                 <button
                                     onClick={() => setSelectedTicket(null)}
@@ -218,6 +218,7 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
             {showPrintView && selectedTicket && (
                 <TicketPrintView
                     ticket={selectedTicket}
+                    mode="rental"
                     onClose={() => setShowPrintView(false)}
                 />
             )}

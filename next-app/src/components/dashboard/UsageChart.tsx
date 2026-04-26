@@ -19,15 +19,15 @@ const COLORS = ['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899'
 
 export default function UsageChart({ data }: UsageChartProps) {
     return (
-        <div className="h-[300px] w-full">
+        <div className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <XAxis
                         dataKey="name"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#94a3b8', fontSize: 12 }}
+                        tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
                         dy={10}
                     />
                     <YAxis

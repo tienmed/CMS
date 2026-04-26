@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, RotateCcw } from 'lucide-react';
 import { RentalTicket } from '@/types/rental';
+import { useSearchParams, useRouter } from 'next/navigation';
 import ReturnTicketModal from './ReturnTicketModal';
 
 interface ActiveTicketsTableProps {
@@ -13,6 +14,27 @@ export default function ActiveTicketsTable({ initialTickets }: ActiveTicketsTabl
     const [tickets, setTickets] = useState(initialTickets);
     const [selectedTicket, setSelectedTicket] = useState<{ id: number; no: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    // Tự động mở modal nếu có query param ?ticket=id
+    useEffect(() => {
+        const ticketId = searchParams.get('ticket');
+        if (ticketId) {
+            const ticket = tickets.find(t => t.id === parseInt(ticketId));
+            if (ticket) {
+                setSelectedTicket({ id: ticket.id, no: ticket.ticket_no });
+            }
+        }
+    }, [searchParams, tickets]);
+
+    const handleCloseModal = () => {
+        setSelectedTicket(null);
+        // Xóa query param sau khi đóng
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete('ticket');
+        router.replace(`/dashboard/rental?${params.toString()}`);
+    };
 
     const filteredTickets = tickets.filter(t =>
         t.ticket_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -87,8 +109,11 @@ export default function ActiveTicketsTable({ initialTickets }: ActiveTicketsTabl
                 <ReturnTicketModal
                     ticketId={selectedTicket.id}
                     ticketNo={selectedTicket.no}
-                    onClose={() => setSelectedTicket(null)}
-                    onSuccess={handleRefresh}
+                    onClose={handleCloseModal}
+                    onSuccess={() => {
+                        handleCloseModal();
+                        handleRefresh();
+                    }}
                 />
             )}
         </>

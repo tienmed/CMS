@@ -31,21 +31,22 @@ export default function StatCards({ stats }: {
                     <Link
                         key={stat.name}
                         href={`/dashboard/analytics/detailed/${stat.type}`}
-                        className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group hover:border-blue-200 hover:-translate-y-1 block"
+                        className="bg-white/70 backdrop-blur-md p-4 rounded-3xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all cursor-pointer group hover:border-blue-200/50 hover:-translate-y-1 block relative overflow-hidden"
                     >
-                        <div className="flex items-center justify-between mb-4">
-                            <div className={cn("p-3 rounded-xl transition-colors", stat.bg, "group-hover:bg-opacity-80")}>
-                                <CardIcon className={cn("w-6 h-6", stat.color)} />
+                        <div className="absolute top-[-10px] right-[-10px] p-6 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none">
+                            <CardIcon className="w-28 h-28 rotate-12" />
+                        </div>
+
+                        <div className="flex items-center justify-between mb-2 relative z-10">
+                            <div className={cn("p-2 rounded-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3", stat.bg, "shadow-sm")}>
+                                <CardIcon className={cn("w-5 h-5", stat.color)} />
                             </div>
-                            <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full uppercase tracking-wider">Chi tiết</span>
+                            <span className="text-[9px] font-black text-slate-400 bg-slate-100/50 px-2 py-1 rounded-full uppercase tracking-widest leading-none border border-slate-100 backdrop-blur-sm relative z-20">Chi tiết</span>
                         </div>
-                        <div>
-                            <p className="text-sm font-semibold text-slate-500 mb-1">{stat.name}</p>
-                            <h3 suppressHydrationWarning className="text-3xl font-bold text-slate-900 tracking-tight">{stat.value.toLocaleString()}</h3>
-                        </div>
-                        <div className="mt-4 flex items-center gap-1.5 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span className="text-xs font-bold uppercase tracking-wider">Xem báo cáo chi tiết</span>
-                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+
+                        <div className="relative z-10">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{stat.name}</p>
+                            <h3 suppressHydrationWarning className="text-2xl font-black text-slate-900 tracking-tighter">{stat.value.toLocaleString()}</h3>
                         </div>
                     </Link>
                 );

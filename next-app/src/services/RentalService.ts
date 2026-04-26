@@ -93,6 +93,22 @@ class RentalService {
     async createRentalTicket(ticket: Omit<RentalTicket, 'id'>, itemIds: number[]): Promise<number> {
         return await withTransaction(async (connection) => {
             try {
+                // Kiểm tra ràng buộc mượn đồ (Status & Condition)
+                const [invalidItems] = await connection.query(`
+                    SELECT ei.barcode_stt, es.name as status_name, c.name as condition_name, c.rental_reject_msg
+                    FROM equipment_item ei
+                    JOIN equipment_status es ON ei.equipment_status_id = es.id
+                    JOIN \`condition\` c ON ei.condition_id = c.id
+                    WHERE ei.id IN (?) AND (es.is_rentable = 0 OR c.is_rentable = 0)
+                `, [itemIds]) as any[];
+
+                if (invalidItems.length > 0) {
+                    const names = invalidItems.map((i: any) =>
+                        `${i.barcode_stt} (Tình trạng: ${i.condition_name}${i.rental_reject_msg ? ` - ${i.rental_reject_msg}` : ''})`
+                    ).join(', ');
+                    throw new AppError(`Các thiết bị sau không thể mượn: ${names}`, 400, 'RENTAL_CONSTRAINT_ERROR');
+                }
+
                 const [ticketResult] = await connection.query(
                     'INSERT INTO rental_ticket (ticket_no, note, due_date, rented_date, created_by, rented_full_name, rented_by) VALUES (?, ?, ?, ?, ?, ?, ?)',
                     [ticket.ticket_no, ticket.note, ticket.due_date, ticket.rented_date, ticket.created_by, ticket.rented_full_name, ticket.rented_by]
@@ -110,7 +126,8 @@ class RentalService {
                 }
 
                 return ticketId;
-            } catch (err) {
+            } catch (err: any) {
+                if (err instanceof AppError) throw err;
                 throw new AppError('Lỗi khi mượn thiết bị', 500, 'RENTAL_CREATION_ERROR');
             }
         });
