@@ -78,6 +78,25 @@ class EquipmentService {
             throw new AppError('Lỗi khi cập nhật thông tin thiết bị', 500, 'DB_UPDATE_ERROR');
         }
     }
+
+    /**
+     * Lấy danh sách toàn bộ mẫu vật có thể cho mượn (đang ở trạng thái is_rentable = 1)
+     */
+    async getRentableItems(): Promise<(EquipmentItem & { equipment_name: string; status_name: string })[]> {
+        try {
+            const [rows] = await pool.query(`
+                SELECT ei.*, e.name as equipment_name, es.name as status_name
+                FROM equipment_item ei
+                JOIN equipment e ON ei.equipment_id = e.id
+                JOIN equipment_status es ON ei.equipment_status_id = es.id
+                WHERE es.is_rentable = 1 AND ei.deleted_at IS NULL
+                ORDER BY e.name, ei.barcode_stt
+            `);
+            return rows as (EquipmentItem & { equipment_name: string; status_name: string })[];
+        } catch (err) {
+            throw new AppError('Không thể lấy danh sách mẫu vật sẵn sàng', 500, 'DB_QUERY_ERROR');
+        }
+    }
 }
 
 export const equipmentService = EquipmentService.getInstance();

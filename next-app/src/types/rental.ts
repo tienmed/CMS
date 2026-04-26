@@ -24,10 +24,21 @@ export interface RentalDetail {
 }
 
 export interface UsageHistory {
+    id: number; // ticket id
     date: Date;
     ticket_no: string;
-    equipment_name: string;
-    barcode: string;
+    department_name: string;
     renter: string;
+    note?: string;
     status: 'rented' | 'returned';
+    items: {
+        id?: number;
+        detail_id?: number;
+        equipment_name: string;
+        barcode: string;
+        barcode_stt: string;
+        status: string;
+        returned_at?: Date | null;
+        due_date?: Date | null;
+    }[];
 }

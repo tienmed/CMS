@@ -5,6 +5,7 @@ export interface DashboardStats {
     totalItems: number;
     rentableItems: number;
     nonRentableItems: number;
+    openTickets: number;
 }
 
 export interface GroupDistribution {
@@ -16,6 +17,12 @@ export interface GroupDistribution {
 export interface LevelDistribution {
     level_code: string;
     label: string;
+    count: number;
+}
+
+export interface DetailedStat {
+    group_code: string;
+    level_code: string;
     count: number;
 }
 
@@ -32,20 +39,30 @@ class DashboardService {
     }
 
     async getStats(): Promise<DashboardStats> {
-        const [[{ totalEquipment }]] = await pool.query('SELECT COUNT(*) as totalEquipment FROM equipment WHERE deleted_at IS NULL') as any;
-        const [[{ totalItems }]] = await pool.query('SELECT COUNT(*) as totalItems FROM equipment_item WHERE deleted_at IS NULL') as any;
-        const [[{ rentableItems }]] = await pool.query(`
-            SELECT COUNT(*) as rentableItems FROM equipment_item ei
-            JOIN equipment_status es ON ei.equipment_status_id = es.id
-            WHERE es.is_rentable = 1 AND ei.deleted_at IS NULL
-        `) as any;
-        const [[{ nonRentableItems }]] = await pool.query(`
-            SELECT COUNT(*) as nonRentableItems FROM equipment_item ei
-            JOIN equipment_status es ON ei.equipment_status_id = es.id
-            WHERE es.is_rentable = 0 AND ei.deleted_at IS NULL
-        `) as any;
+        const query = `
+            SELECT 
+                (SELECT COUNT(*) FROM equipment WHERE deleted_at IS NULL) as totalEquipment,
+                (SELECT COUNT(*) FROM equipment_item WHERE deleted_at IS NULL) as totalItems,
+                (SELECT COUNT(*) FROM equipment_item ei 
+                 JOIN equipment_status es ON ei.equipment_status_id = es.id 
+                 WHERE es.is_rentable = 1 AND ei.deleted_at IS NULL) as rentableItems,
+                (SELECT COUNT(*) FROM equipment_item ei 
+                 JOIN equipment_status es ON ei.equipment_status_id = es.id 
+                 WHERE es.is_rentable = 0 AND ei.deleted_at IS NULL) as nonRentableItems,
+                (SELECT COUNT(*) FROM rental_ticket 
+                 WHERE completed_date IS NULL AND deleted_at IS NULL) as openTickets
+        `;
 
-        return { totalEquipment, totalItems, rentableItems, nonRentableItems };
+        const [rows] = await pool.query(query) as any;
+        const stats = rows[0];
+
+        return {
+            totalEquipment: Number(stats.totalEquipment),
+            totalItems: Number(stats.totalItems),
+            rentableItems: Number(stats.rentableItems),
+            nonRentableItems: Number(stats.nonRentableItems),
+            openTickets: Number(stats.openTickets)
+        };
     }
 
     /**
@@ -114,6 +131,62 @@ class DashboardService {
     `;
         const [rows] = await pool.query(query);
         return rows as { name: string; value: number }[];
+    }
+
+    /**
+     * Lấy phân bố chi tiết theo nhóm và mức độ cho từng loại thống kê
+     */
+    async getDetailedDistribution(type: 'equipment' | 'items' | 'rentable' | 'non-rentable'): Promise<DetailedStat[]> {
+        let query = '';
+        if (type === 'equipment') {
+            query = `
+                SELECT 
+                    SUBSTRING(barcode, 1, 2) as group_code,
+                    SUBSTRING(barcode, 3, 1) as level_code,
+                    COUNT(*) as count
+                FROM equipment
+                WHERE deleted_at IS NULL AND barcode IS NOT NULL AND LENGTH(barcode) >= 3
+                GROUP BY group_code, level_code
+            `;
+        } else if (type === 'items') {
+            query = `
+                SELECT 
+                    SUBSTRING(e.barcode, 1, 2) as group_code,
+                    SUBSTRING(e.barcode, 3, 1) as level_code,
+                    COUNT(*) as count
+                FROM equipment_item ei
+                JOIN equipment e ON ei.equipment_id = e.id
+                WHERE ei.deleted_at IS NULL AND e.barcode IS NOT NULL AND LENGTH(e.barcode) >= 3
+                GROUP BY group_code, level_code
+            `;
+        } else if (type === 'rentable') {
+            query = `
+                SELECT 
+                    SUBSTRING(e.barcode, 1, 2) as group_code,
+                    SUBSTRING(e.barcode, 3, 1) as level_code,
+                    COUNT(*) as count
+                FROM equipment_item ei
+                JOIN equipment e ON ei.equipment_id = e.id
+                JOIN equipment_status es ON ei.equipment_status_id = es.id
+                WHERE ei.deleted_at IS NULL AND es.is_rentable = 1 AND e.barcode IS NOT NULL AND LENGTH(e.barcode) >= 3
+                GROUP BY group_code, level_code
+            `;
+        } else if (type === 'non-rentable') {
+            query = `
+                SELECT 
+                    SUBSTRING(e.barcode, 1, 2) as group_code,
+                    SUBSTRING(e.barcode, 3, 1) as level_code,
+                    COUNT(*) as count
+                FROM equipment_item ei
+                JOIN equipment e ON ei.equipment_id = e.id
+                JOIN equipment_status es ON ei.equipment_status_id = es.id
+                WHERE ei.deleted_at IS NULL AND es.is_rentable = 0 AND e.barcode IS NOT NULL AND LENGTH(e.barcode) >= 3
+                GROUP BY group_code, level_code
+            `;
+        }
+
+        const [rows] = await pool.query(query) as any;
+        return rows as DetailedStat[];
     }
 }
 

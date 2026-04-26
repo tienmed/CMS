@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import UsageChart from '@/components/dashboard/UsageChart';
+import StatCards from '@/components/dashboard/StatCards';
+import RecentActivity from '@/components/dashboard/RecentActivity';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,31 +28,17 @@ export default async function DashboardPage() {
     ]);
 
     const statCards = [
-        { name: 'Tổng mô hình TB', value: stats.totalEquipment, icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
-        { name: 'Tổng mẫu vật', value: stats.totalItems, icon: Activity, color: 'text-purple-600', bg: 'bg-purple-50' },
-        { name: 'Sẵn sàng cho mượn', value: stats.rentableItems, icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50' },
-        { name: 'Không khả dụng', value: stats.nonRentableItems, icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-50' },
+        { name: 'Tổng mô hình TB', value: stats.totalEquipment, icon: 'package', color: 'text-blue-600', bg: 'bg-blue-50', type: 'equipment' },
+        { name: 'Tổng mẫu vật', value: stats.totalItems, icon: 'activity', color: 'text-purple-600', bg: 'bg-purple-50', type: 'items' },
+        { name: 'Phiếu mượn mở', value: stats.openTickets, icon: 'history', color: 'text-amber-600', bg: 'bg-amber-50', type: 'open-tickets' },
+        { name: 'Sẵn sàng mượn', value: stats.rentableItems, icon: 'check-circle', color: 'text-green-600', bg: 'bg-green-50', type: 'rentable' },
+        { name: 'Không khả dụng', value: stats.nonRentableItems, icon: 'alert-triangle', color: 'text-orange-600', bg: 'bg-orange-50', type: 'non-rentable' },
     ];
 
     return (
         <div className="space-y-8">
             {/* Statistics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {statCards.map((stat) => (
-                    <div key={stat.name} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className={cn("p-3 rounded-xl", stat.bg)}>
-                                <stat.icon className={cn("w-6 h-6", stat.color)} />
-                            </div>
-                            <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full uppercase tracking-wider">Thống kê</span>
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold text-slate-500 mb-1">{stat.name}</p>
-                            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{stat.value}</h3>
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <StatCards stats={statCards} />
 
             {/* Barcode Analytics: Group & Level Distribution */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -171,59 +159,9 @@ export default async function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Recent Activity Table */}
-                <div className="lg:col-span-3 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2">
-                            <History className="w-5 h-5 text-blue-500" />
-                            Lịch sử mượn trả gần nhất
-                        </h3>
-                        <button className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">Xem tất cả</button>
-                    </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-slate-100">
-                                    <th className="pb-4 font-semibold text-slate-500 text-sm uppercase tracking-wider">Thời gian</th>
-                                    <th className="pb-4 font-semibold text-slate-500 text-sm uppercase tracking-wider">Mã phiếu</th>
-                                    <th className="pb-4 font-semibold text-slate-500 text-sm uppercase tracking-wider">Thiết bị</th>
-                                    <th className="pb-4 font-semibold text-slate-500 text-sm uppercase tracking-wider">Người mượn</th>
-                                    <th className="pb-4 font-semibold text-slate-500 text-sm uppercase tracking-wider text-right">Trạng thái</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {history.map((record: any, index: number) => (
-                                    <tr key={index} className="hover:bg-slate-50/80 transition-colors group">
-                                        <td className="py-4 text-sm text-slate-600">
-                                            {new Date(record.date).toLocaleDateString('vi-VN')}
-                                        </td>
-                                        <td className="py-4 text-sm font-mono font-medium text-slate-900">
-                                            {record.ticket_no}
-                                        </td>
-                                        <td className="py-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-semibold text-slate-800">{record.equipment_name}</span>
-                                                <span className="text-xs text-slate-400">#{record.barcode}</span>
-                                            </div>
-                                        </td>
-                                        <td className="py-4 text-sm text-slate-600">
-                                            {record.renter}
-                                        </td>
-                                        <td className="py-4 text-right">
-                                            <span className={cn(
-                                                "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
-                                                record.status === 'returned'
-                                                    ? "bg-green-100 text-green-700 border border-green-200"
-                                                    : "bg-amber-100 text-amber-700 border border-amber-200"
-                                            )}>
-                                                {record.status === 'returned' ? 'Đã trả' : 'Đang mượn'}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                {/* Recent Activity Section */}
+                <div className="lg:col-span-3">
+                    <RecentActivity history={history} />
                 </div>
             </div>
         </div>
