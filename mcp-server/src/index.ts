@@ -3,6 +3,23 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import pool from "./db.js";
 
+const DEFAULT_LIST_LIMIT = 50;
+const MAX_LIST_LIMIT = 200;
+const DEFAULT_RECENT_USAGE_LIMIT = 10;
+const MAX_RECENT_USAGE_LIMIT = 100;
+const SEARCH_RESULT_LIMIT = 20;
+
+function clampLimit(limit: number, max: number, fallback: number): number {
+    if (!Number.isFinite(limit)) {
+        return fallback;
+    }
+    const normalized = Math.floor(limit);
+    if (normalized <= 0) {
+        return fallback;
+    }
+    return Math.min(normalized, max);
+}
+
 const server = new McpServer({
     name: "cecics-equipment-manager",
     version: "1.0.0"
@@ -14,21 +31,26 @@ server.registerTool(
     {
         description: "Lấy danh sách tất cả thiết bị trong kho CECICS",
         inputSchema: z.object({
-            limit: z.number().default(50).describe("Số lượng bản ghi tối đa"),
+            limit: z.number().default(DEFAULT_LIST_LIMIT).describe("Số lượng bản ghi tối đa"),
             type_id: z.number().optional().describe("Lọc theo loại thiết bị (type_id)")
         })
     },
     async ({ limit, type_id }) => {
-        let query = "SELECT * FROM equipment WHERE deleted_at IS NULL";
+        const safeLimit = clampLimit(limit, MAX_LIST_LIMIT, DEFAULT_LIST_LIMIT);
+        let query = `
+            SELECT id, name, barcode, type_id, created_at, updated_at
+            FROM equipment
+            WHERE deleted_at IS NULL
+        `;
         const params: any[] = [];
 
-        if (type_id) {
+        if (typeof type_id === "number") {
             query += " AND type_id = ?";
             params.push(type_id);
         }
 
         query += " LIMIT ?";
-        params.push(limit);
+        params.push(safeLimit);
 
         const [rows] = await pool.query(query, params);
         return {
@@ -47,9 +69,21 @@ server.registerTool(
         })
     },
     async ({ query }) => {
-        const sql = "SELECT * FROM equipment WHERE (name LIKE ? OR barcode LIKE ?) AND deleted_at IS NULL LIMIT 20";
-        const searchTerm = `%${query}%`;
-        const [rows] = await pool.query(sql, [searchTerm, searchTerm]);
+        const normalizedQuery = query.trim();
+        if (!normalizedQuery) {
+            return {
+                content: [{ type: "text", text: "Vui lòng nhập từ khóa tìm kiếm hợp lệ." }]
+            };
+        }
+
+        const sql = `
+            SELECT id, name, barcode, type_id, created_at, updated_at
+            FROM equipment
+            WHERE (name LIKE ? OR barcode LIKE ?) AND deleted_at IS NULL
+            LIMIT ?
+        `;
+        const searchTerm = `%${normalizedQuery}%`;
+        const [rows] = await pool.query(sql, [searchTerm, searchTerm, SEARCH_RESULT_LIMIT]);
         return {
             content: [{ type: "text", text: JSON.stringify(rows, null, 2) }]
         };
@@ -89,10 +123,11 @@ server.registerTool(
     {
         description: "Lấy lịch sử mượn trả thiết bị gần đây",
         inputSchema: z.object({
-            limit: z.number().default(10).describe("Số lượng bản ghi gần nhất")
+            limit: z.number().default(DEFAULT_RECENT_USAGE_LIMIT).describe("Số lượng bản ghi gần nhất")
         })
     },
     async ({ limit }) => {
+        const safeLimit = clampLimit(limit, MAX_RECENT_USAGE_LIMIT, DEFAULT_RECENT_USAGE_LIMIT);
         const sql = `
       SELECT 
         rt.rented_date, 
@@ -108,7 +143,7 @@ server.registerTool(
       ORDER BY rt.rented_date DESC
       LIMIT ?
     `;
-        const [rows] = await pool.query(sql, [limit]);
+        const [rows] = await pool.query(sql, [safeLimit]);
         return {
             content: [{ type: "text", text: JSON.stringify(rows, null, 2) }]
         };
