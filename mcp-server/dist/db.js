@@ -6,6 +6,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // Load env from next-app so we don't duplicate credentials
 dotenv.config({ path: path.resolve(__dirname, '../../next-app/.env.local') });
+const requiredEnvVars = ['MYSQL_HOST', 'MYSQL_USER', 'MYSQL_DATABASE'];
+for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+        throw new Error(`Missing required environment variable: ${envVar}`);
+    }
+}
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
