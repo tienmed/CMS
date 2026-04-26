@@ -3,12 +3,8 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "dev": "npm run dev:app",
-        "dev:app": "npm run dev --prefix next-app",
-        "dev:mcp": "npm run dev --prefix mcp-server",
-        "install:app": "npm install --prefix next-app",
-        "install:mcp": "npm install --prefix mcp-server",
-        "install:all": "npm run install:app && npm run install:mcp",
-        "build:all": "npm run build --prefix next-app && npm run build --prefix mcp-server"
+        "dev": "npm run dev --prefix next-app",
+        "install:all": "npm install --prefix next-app",
+        "build": "npm run build --prefix next-app"
     }
 }
