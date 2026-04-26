@@ -23,3 +23,7 @@
 ## 4. Cơ sở dữ liệu (Database)
 *   **No SQL Hardcoding:** Luôn sử dụng parameterized queries để chống SQL Injection.
 *   **Efficiency:** Luôn cân nhắc việc gộp truy vấn nếu có thể thực hiện được bằng SQL (Subqueries/Joins) trước khi xử lý bằng code JS để tiết kiệm kết nối.
+
+## 5. Đồng bộ hóa (Git Synchronization)
+*   **Always Sync:** Trước khi kết thúc phiên làm việc, bắt buộc phải commit và push toàn bộ thay đổi lên nhánh `origin/main` để đảm bảo tính sẵn sàng của môi trường Vercel.
+*   **Main is Ground Truth:** Toàn bộ quá trình phát triển (bao gồm cả các nhánh release) phải được merge/push vào `origin/main` để kích hoạt lượt build tự động và đồng bộ hóa môi trường triển khai.
