@@ -1,10 +1,15 @@
 import { Sidebar } from '@/components/Sidebar';
+import { cookies } from 'next/headers';
+import { authCookieName, verifySessionToken } from '@/lib/auth';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const cookieStore = await cookies();
+    const user = verifySessionToken(cookieStore.get(authCookieName)?.value);
+
     return (
         <div className="h-screen bg-[#f8fafc] overflow-hidden flex flex-col lg:flex-row">
             <Sidebar />
@@ -15,11 +20,11 @@ export default function DashboardLayout({
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col items-end hidden sm:flex">
-                            <span className="text-sm font-bold text-slate-900 leading-none">Administrator</span>
-                            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">Super Admin</span>
+                            <span className="text-sm font-bold text-slate-900 leading-none">{user?.name || user?.username || 'User'}</span>
+                            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">{user?.email || ''}</span>
                         </div>
                         <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-200 border border-white/20">
-                            <span className="font-black text-sm lg:text-base">AD</span>
+                            <span className="font-black text-sm lg:text-base">{(user?.name || user?.username || 'U').slice(0, 2).toUpperCase()}</span>
                         </div>
                     </div>
                 </header>

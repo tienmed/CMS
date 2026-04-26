@@ -11,7 +11,8 @@ import {
     LayoutDashboard,
     LogOut,
     Menu,
-    X
+    X,
+    QrCode
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ const menuItems = [
     { name: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Kho thiết bị', href: '/dashboard/equipment', icon: Package },
     { name: 'Mượn / Trả', href: '/dashboard/rental', icon: ClipboardList },
+    { name: 'Tra cứu QR', href: '/dashboard/qr', icon: QrCode },
     { name: 'Lịch sử sử dụng', href: '/dashboard/history', icon: History },
     { name: 'Báo cáo', href: '/dashboard/reports', icon: BarChart3 },
 ];
@@ -60,10 +62,10 @@ export function Sidebar() {
             </nav>
 
             <div className="p-4 border-t border-slate-800/50 mt-auto bg-slate-900/50 backdrop-blur-sm">
-                <button className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-slate-500 hover:bg-red-900/20 hover:text-red-400 transition-all text-sm font-bold group">
+                <Link href="/logout" className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-slate-500 hover:bg-red-900/20 hover:text-red-400 transition-all text-sm font-bold group">
                     <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     <span>Đăng xuất</span>
-                </button>
+                </Link>
             </div>
         </>
     );

@@ -195,6 +195,83 @@ class EquipmentService {
             throw new AppError('Lỗi khi kiểm tra trạng thái thiết bị', 500, 'DB_QUERY_ERROR');
         }
     }
+
+    /**
+     * Lấy thông tin chi tiết theo barcode_stt (mã QR của từng mẫu vật)
+     */
+    async getItemDetailByBarcode(barcode: string): Promise<{
+        item: (EquipmentItem & {
+            equipment_name: string;
+            equipment_barcode: string | null;
+            equipment_note: string | null;
+            equipment_image_url: string | null;
+            status_name: string;
+            status_is_rentable: boolean;
+            condition_name: string;
+            condition_is_rentable: boolean;
+            condition_reject_msg: string | null;
+            usage_count: number;
+        }) | null;
+        activeTicket?: { id: number; ticket_no: string; renter: string; rented_date: Date };
+    }> {
+        try {
+            const [rows] = await pool.query(`
+                SELECT
+                    ei.*,
+                    e.name as equipment_name,
+                    e.barcode as equipment_barcode,
+                    e.note as equipment_note,
+                    e.url as equipment_image_url,
+                    es.name as status_name,
+                    es.is_rentable as status_is_rentable,
+                    c.name as condition_name,
+                    c.is_rentable as condition_is_rentable,
+                    c.rental_reject_msg as condition_reject_msg,
+                    COALESCE(usage.usage_count, 0) as usage_count
+                FROM equipment_item ei
+                JOIN equipment e ON ei.equipment_id = e.id
+                JOIN equipment_status es ON ei.equipment_status_id = es.id
+                JOIN \`condition\` c ON ei.condition_id = c.id
+                LEFT JOIN (
+                    SELECT equipment_item_id, COUNT(*) as usage_count
+                    FROM rental_detail
+                    GROUP BY equipment_item_id
+                ) usage ON usage.equipment_item_id = ei.id
+                WHERE ei.barcode_stt = ? AND ei.deleted_at IS NULL
+                LIMIT 1
+            `, [barcode]) as any;
+
+            if (!rows.length) {
+                return { item: null };
+            }
+
+            const item = rows[0];
+            const normalizedItem = {
+                ...item,
+                usage_count: Number(item.usage_count || 0),
+                status_is_rentable: Boolean(item.status_is_rentable),
+                condition_is_rentable: Boolean(item.condition_is_rentable),
+            };
+
+            const [ticketRows] = await pool.query(`
+                SELECT rt.id, rt.ticket_no, rt.rented_full_name as renter, rt.rented_date
+                FROM rental_detail rd
+                JOIN rental_ticket rt ON rd.rental_ticket_id = rt.id
+                WHERE rd.equipment_item_id = ? 
+                    AND rd.returned_at IS NULL
+                    AND rt.deleted_at IS NULL
+                ORDER BY rt.rented_date DESC
+                LIMIT 1
+            `, [item.id]) as any;
+
+            return {
+                item: normalizedItem,
+                activeTicket: ticketRows[0] || undefined
+            };
+        } catch (err) {
+            throw new AppError('Không thể lấy chi tiết mã QR thiết bị', 500, 'DB_QUERY_ERROR');
+        }
+    }
 }
 
 export const equipmentService = EquipmentService.getInstance();
