@@ -6,20 +6,12 @@ const server = new McpServer({
     name: "cecics-equipment-manager",
     version: "1.0.0"
 });
-const DEFAULT_LIMIT = 50;
-const MAX_LIMIT = 200;
-function asTextContent(data) {
+
     return {
         content: [{ type: "text", text: JSON.stringify(data, null, 2) }]
     };
 }
-function asErrorContent(message) {
-    return {
-        content: [{ type: "text", text: message }],
-        isError: true
-    };
-}
-function normalizeSearchQuery(query) {
+(query) {
     return `%${query.trim().replace(/[%_]/g, "\\$&")}%`;
 }
 function safeNumberLimit(value) {
@@ -34,48 +26,18 @@ async function withDb(action) {
         const detail = getPoolInitError() ?? "Không thể khởi tạo kết nối MySQL.";
         throw new Error(detail);
     }
-    return action(db);
-}
+    return action(db)
 // Tool: List all equipment
 server.registerTool("list_equipment", {
     description: "Lấy danh sách tất cả thiết bị trong kho CECICS",
     inputSchema: z.object({
-        limit: z.number().int().min(1).max(MAX_LIMIT).default(DEFAULT_LIMIT).describe("Số lượng bản ghi tối đa"),
-        type_id: z.number().int().positive().optional().describe("Lọc theo loại thiết bị (type_id)")
-    })
-}, async ({ limit, type_id }) => {
-    try {
-        let query = "SELECT * FROM equipment WHERE deleted_at IS NULL";
-        const params = [];
-        if (type_id !== undefined) {
-            query += " AND type_id = ?";
-            params.push(type_id);
-        }
-        query += " LIMIT ?";
-        params.push(safeNumberLimit(limit));
-        const [rows] = await withDb((db) => db.query(query, params));
-        return asTextContent(rows);
-    }
-    catch (error) {
-        return asErrorContent(`Lỗi khi lấy danh sách thiết bị: ${getErrorMessage(error)}`);
-    }
+
 });
 // Tool: Search equipment
 server.registerTool("search_equipment", {
     description: "Tìm kiếm thiết bị theo tên hoặc mã barcode",
     inputSchema: z.object({
-        query: z.string().trim().min(1).max(100).describe("Từ khóa tìm kiếm (tên hoặc barcode)")
-    })
-}, async ({ query }) => {
-    try {
-        const sql = "SELECT * FROM equipment WHERE (name LIKE ? ESCAPE '\\\\' OR barcode LIKE ? ESCAPE '\\\\') AND deleted_at IS NULL LIMIT 20";
-        const searchTerm = normalizeSearchQuery(query);
-        const [rows] = await withDb((db) => db.query(sql, [searchTerm, searchTerm]));
-        return asTextContent(rows);
-    }
-    catch (error) {
-        return asErrorContent(`Lỗi khi tìm kiếm thiết bị: ${getErrorMessage(error)}`);
-    }
+
 });
 // Tool: Get item status by barcode
 server.registerTool("get_item_status", {
@@ -84,8 +46,7 @@ server.registerTool("get_item_status", {
         barcode: z.string().trim().min(1).max(100).describe("Mã vạch của thiết bị (barcode_stt)")
     })
 }, async ({ barcode }) => {
-    try {
-        const query = `
+
       SELECT ei.*, e.name as equipment_name, es.name as status_name
       FROM equipment_item ei
       JOIN equipment e ON ei.equipment_id = e.id
@@ -101,12 +62,13 @@ server.registerTool("get_item_status", {
     catch (error) {
         return asErrorContent(`Lỗi khi kiểm tra trạng thái thiết bị: ${getErrorMessage(error)}`);
     }
+
 });
 // Tool: Get recent usage
 server.registerTool("get_recent_usage", {
     description: "Lấy lịch sử mượn trả thiết bị gần đây",
     inputSchema: z.object({
-        limit: z.number().int().min(1).max(MAX_LIMIT).default(10).describe("Số lượng bản ghi gần nhất")
+
     })
 }, async ({ limit }) => {
     try {
@@ -125,12 +87,6 @@ server.registerTool("get_recent_usage", {
       ORDER BY rt.rented_date DESC
       LIMIT ?
     `;
-        const [rows] = await withDb((db) => db.query(sql, [safeNumberLimit(limit)]));
-        return asTextContent(rows);
-    }
-    catch (error) {
-        return asErrorContent(`Lỗi khi lấy lịch sử mượn trả: ${getErrorMessage(error)}`);
-    }
 });
 async function main() {
     const transport = new StdioServerTransport();
