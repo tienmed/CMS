@@ -2,11 +2,22 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import pool from "./db.js";
+import type { RowDataPacket } from "mysql2/promise";
 
 const server = new McpServer({
     name: "cecics-equipment-manager",
     version: "1.0.0"
 });
+
+const DEFAULT_LIST_LIMIT = 50;
+const DEFAULT_RECENT_USAGE_LIMIT = 10;
+const MAX_LIMIT = 200;
+
+function formatResponse(data: unknown) {
+    return {
+        content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }]
+    };
+}
 
 // Tool: List all equipment
 server.registerTool(
@@ -14,15 +25,15 @@ server.registerTool(
     {
         description: "Lấy danh sách tất cả thiết bị trong kho CECICS",
         inputSchema: z.object({
-            limit: z.number().default(50).describe("Số lượng bản ghi tối đa"),
-            type_id: z.number().optional().describe("Lọc theo loại thiết bị (type_id)")
+            limit: z.number().int().positive().max(MAX_LIMIT).default(DEFAULT_LIST_LIMIT).describe("Số lượng bản ghi tối đa"),
+            type_id: z.number().int().nonnegative().optional().describe("Lọc theo loại thiết bị (type_id)")
         })
     },
     async ({ limit, type_id }) => {
         let query = "SELECT * FROM equipment WHERE deleted_at IS NULL";
         const params: any[] = [];
 
-        if (type_id) {
+        if (type_id !== undefined) {
             query += " AND type_id = ?";
             params.push(type_id);
         }
@@ -30,10 +41,8 @@ server.registerTool(
         query += " LIMIT ?";
         params.push(limit);
 
-        const [rows] = await pool.query(query, params);
-        return {
-            content: [{ type: "text", text: JSON.stringify(rows, null, 2) }]
-        };
+        const [rows] = await pool.query<RowDataPacket[]>(query, params);
+        return formatResponse(rows);
     }
 );
 
@@ -43,16 +52,14 @@ server.registerTool(
     {
         description: "Tìm kiếm thiết bị theo tên hoặc mã barcode",
         inputSchema: z.object({
-            query: z.string().describe("Từ khóa tìm kiếm (tên hoặc barcode)")
+            query: z.string().trim().min(1).max(200).describe("Từ khóa tìm kiếm (tên hoặc barcode)")
         })
     },
     async ({ query }) => {
         const sql = "SELECT * FROM equipment WHERE (name LIKE ? OR barcode LIKE ?) AND deleted_at IS NULL LIMIT 20";
         const searchTerm = `%${query}%`;
-        const [rows] = await pool.query(sql, [searchTerm, searchTerm]);
-        return {
-            content: [{ type: "text", text: JSON.stringify(rows, null, 2) }]
-        };
+        const [rows] = await pool.query<RowDataPacket[]>(sql, [searchTerm, searchTerm]);
+        return formatResponse(rows);
     }
 );
 
@@ -62,7 +69,7 @@ server.registerTool(
     {
         description: "Kiểm tra trạng thái và vị trí của một mẫu vật cụ thể qua mã vạch (barcode_stt)",
         inputSchema: z.object({
-            barcode: z.string().describe("Mã vạch của thiết bị (barcode_stt)")
+            barcode: z.string().trim().min(1).max(100).describe("Mã vạch của thiết bị (barcode_stt)")
         })
     },
     async ({ barcode }) => {
@@ -73,13 +80,11 @@ server.registerTool(
       JOIN equipment_status es ON ei.equipment_status_id = es.id
       WHERE ei.barcode_stt = ? AND ei.deleted_at IS NULL
     `;
-        const [rows] = await pool.query(query, [barcode]) as any;
+        const [rows] = await pool.query<RowDataPacket[]>(query, [barcode]);
         if (rows.length === 0) {
             return { content: [{ type: "text", text: `Không tìm thấy thiết bị với mã vạch: ${barcode}` }] };
         }
-        return {
-            content: [{ type: "text", text: JSON.stringify(rows[0], null, 2) }]
-        };
+        return formatResponse(rows[0]);
     }
 );
 
@@ -89,7 +94,7 @@ server.registerTool(
     {
         description: "Lấy lịch sử mượn trả thiết bị gần đây",
         inputSchema: z.object({
-            limit: z.number().default(10).describe("Số lượng bản ghi gần nhất")
+            limit: z.number().int().positive().max(MAX_LIMIT).default(DEFAULT_RECENT_USAGE_LIMIT).describe("Số lượng bản ghi gần nhất")
         })
     },
     async ({ limit }) => {
@@ -108,10 +113,8 @@ server.registerTool(
       ORDER BY rt.rented_date DESC
       LIMIT ?
     `;
-        const [rows] = await pool.query(sql, [limit]);
-        return {
-            content: [{ type: "text", text: JSON.stringify(rows, null, 2) }]
-        };
+        const [rows] = await pool.query<RowDataPacket[]>(sql, [limit]);
+        return formatResponse(rows);
     }
 );
 
