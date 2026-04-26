@@ -12,10 +12,13 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StatCards from '@/components/dashboard/StatCards';
+import { testConnection } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
+    const dbStatus = await testConnection();
+
     const [stats, groupDist, levelDist] = await Promise.all([
         dashboardService.getStats(),
         dashboardService.getGroupDistribution(),
@@ -32,6 +35,20 @@ export default async function DashboardPage() {
 
     return (
         <div className="flex flex-col gap-4 h-full max-h-[calc(100vh-140px)] overflow-hidden font-sans">
+            {/* Database Status Warning */}
+            {!dbStatus.success && (
+                <div className="shrink-0 bg-red-50 border border-red-200 p-4 rounded-2xl flex items-center gap-3 text-red-700 shadow-sm animate-pulse">
+                    <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+                    <div className="flex-1 text-sm">
+                        <p className="font-bold">Lỗi kết nối Cơ sở dữ liệu!</p>
+                        <p className="opacity-80">Vui lòng kiểm tra biến môi trường MYSQL_HOST, USER, PASS, DB trên Vercel. Lỗi: {dbStatus.error}</p>
+                    </div>
+                    <Link href="https://vercel.com/dashboard" target="_blank" className="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-700 transition-colors">
+                        Mở Vercel
+                    </Link>
+                </div>
+            )}
+
             {/* Statistics Row */}
             <div className="shrink-0">
                 <StatCards stats={statCards} />

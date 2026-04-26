@@ -39,80 +39,101 @@ class DashboardService {
     }
 
     async getStats(): Promise<DashboardStats> {
-        const query = `
-            SELECT 
-                (SELECT COUNT(*) FROM equipment WHERE deleted_at IS NULL) as totalEquipment,
-                (SELECT COUNT(*) FROM equipment_item WHERE deleted_at IS NULL) as totalItems,
-                (SELECT COUNT(*) FROM equipment_item ei 
-                 JOIN equipment_status es ON ei.equipment_status_id = es.id 
-                 WHERE es.is_rentable = 1 AND ei.deleted_at IS NULL) as rentableItems,
-                (SELECT COUNT(*) FROM equipment_item ei 
-                 JOIN equipment_status es ON ei.equipment_status_id = es.id 
-                 WHERE es.is_rentable = 0 AND ei.deleted_at IS NULL) as nonRentableItems,
-                (SELECT COUNT(*) FROM rental_ticket 
-                 WHERE completed_date IS NULL AND deleted_at IS NULL) as openTickets
-        `;
+        try {
+            const query = `
+                SELECT 
+                    (SELECT COUNT(*) FROM equipment WHERE deleted_at IS NULL) as totalEquipment,
+                    (SELECT COUNT(*) FROM equipment_item WHERE deleted_at IS NULL) as totalItems,
+                    (SELECT COUNT(*) FROM equipment_item ei 
+                     JOIN equipment_status es ON ei.equipment_status_id = es.id 
+                     WHERE es.is_rentable = 1 AND ei.deleted_at IS NULL) as rentableItems,
+                    (SELECT COUNT(*) FROM equipment_item ei 
+                     JOIN equipment_status es ON ei.equipment_status_id = es.id 
+                     WHERE es.is_rentable = 0 AND ei.deleted_at IS NULL) as nonRentableItems,
+                    (SELECT COUNT(*) FROM rental_ticket 
+                     WHERE completed_date IS NULL AND deleted_at IS NULL) as openTickets
+            `;
 
-        const [rows] = await pool.query(query) as any;
-        const stats = rows[0];
+            const [rows] = await pool.query(query) as any;
+            const stats = rows[0];
 
-        return {
-            totalEquipment: Number(stats.totalEquipment),
-            totalItems: Number(stats.totalItems),
-            rentableItems: Number(stats.rentableItems),
-            nonRentableItems: Number(stats.nonRentableItems),
-            openTickets: Number(stats.openTickets)
-        };
+            return {
+                totalEquipment: Number(stats.totalEquipment),
+                totalItems: Number(stats.totalItems),
+                rentableItems: Number(stats.rentableItems),
+                nonRentableItems: Number(stats.nonRentableItems),
+                openTickets: Number(stats.openTickets)
+            };
+        } catch (error) {
+            console.error('Error fetching dashboard stats:', error);
+            return {
+                totalEquipment: 0,
+                totalItems: 0,
+                rentableItems: 0,
+                nonRentableItems: 0,
+                openTickets: 0
+            };
+        }
     }
 
     /**
      * Phân bố theo nhóm (MH, TB, VP) từ barcode_stt
      */
     async getGroupDistribution(): Promise<GroupDistribution[]> {
-        const GROUP_LABELS: Record<string, string> = {
-            'MH': 'Mô hình',
-            'TB': 'Thiết bị',
-            'VP': 'Văn phòng',
-        };
+        try {
+            const GROUP_LABELS: Record<string, string> = {
+                'MH': 'Mô hình',
+                'TB': 'Thiết bị',
+                'VP': 'Văn phòng',
+            };
 
-        const [rows] = await pool.query(`
-            SELECT SUBSTRING(barcode, 1, 2) as group_code, COUNT(*) as count
-            FROM equipment
-            WHERE deleted_at IS NULL AND barcode IS NOT NULL AND LENGTH(barcode) >= 3
-            GROUP BY group_code
-            ORDER BY count DESC
-        `) as any;
+            const [rows] = await pool.query(`
+                SELECT SUBSTRING(barcode, 1, 2) as group_code, COUNT(*) as count
+                FROM equipment
+                WHERE deleted_at IS NULL AND barcode IS NOT NULL AND LENGTH(barcode) >= 3
+                GROUP BY group_code
+                ORDER BY count DESC
+            `) as any;
 
-        return rows.map((r: any) => ({
-            group_code: r.group_code,
-            label: GROUP_LABELS[r.group_code] || r.group_code,
-            count: Number(r.count),
-        }));
+            return rows.map((r: any) => ({
+                group_code: r.group_code,
+                label: GROUP_LABELS[r.group_code] || r.group_code,
+                count: Number(r.count),
+            }));
+        } catch (error) {
+            console.error('Error fetching group distribution:', error);
+            return [];
+        }
     }
 
     /**
      * Phân bố theo mức độ (H, M, L) từ barcode_stt
      */
     async getLevelDistribution(): Promise<LevelDistribution[]> {
-        const LEVEL_LABELS: Record<string, string> = {
-            'H': 'High',
-            'M': 'Medium',
-            'L': 'Low',
-        };
+        try {
+            const LEVEL_LABELS: Record<string, string> = {
+                'H': 'High',
+                'M': 'Medium',
+                'L': 'Low',
+            };
 
-        const [rows] = await pool.query(`
-            SELECT SUBSTRING(barcode, 3, 1) as level_code, COUNT(*) as count
-            FROM equipment
-            WHERE deleted_at IS NULL AND barcode IS NOT NULL AND LENGTH(barcode) >= 3
-            GROUP BY level_code
-            ORDER BY count DESC
-        `) as any;
+            const [rows] = await pool.query(`
+                SELECT SUBSTRING(barcode, 3, 1) as level_code, COUNT(*) as count
+                FROM equipment
+                WHERE deleted_at IS NULL AND barcode IS NOT NULL AND LENGTH(barcode) >= 3
+                GROUP BY level_code
+                ORDER BY count DESC
+            `) as any;
 
-        return rows.map((r: any) => ({
-            level_code: r.level_code,
-            label: LEVEL_LABELS[r.level_code] || r.level_code,
-            count: Number(r.count),
-        }));
+            return rows.map((r: any) => ({
+                level_code: r.level_code,
+                label: LEVEL_LABELS[r.level_code] || r.level_code,
+                count: Number(r.count),
+            }));
+        } catch (error) {
+            console.error('Error fetching level distribution:', error);
+            return [];
+        }
     }
 
     /**
