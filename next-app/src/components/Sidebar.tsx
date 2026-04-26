@@ -62,10 +62,10 @@ export function Sidebar() {
             </nav>
 
             <div className="p-4 border-t border-slate-800/50 mt-auto bg-slate-900/50 backdrop-blur-sm">
-                <button className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-slate-500 hover:bg-red-900/20 hover:text-red-400 transition-all text-sm font-bold group">
+                <Link href="/logout" className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-slate-500 hover:bg-red-900/20 hover:text-red-400 transition-all text-sm font-bold group">
                     <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     <span>Đăng xuất</span>
-                </button>
+                </Link>
             </div>
         </>
     );
