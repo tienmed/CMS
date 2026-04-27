@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Package, CheckCircle2, AlertTriangle, Activity, History } from 'lucide-react';
+import { Package, CheckCircle2, AlertTriangle, Activity, History, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, LucideIcon> = {
     'package': Package,
     'check-circle': CheckCircle2,
     'alert-triangle': AlertTriangle,
@@ -18,8 +18,7 @@ export default function StatCards({ stats }: {
         name: string;
         value: number;
         icon: string;
-        color: string;
-        bg: string;
+        tone: string;
         type: string;
     }[]
 }) {
@@ -34,10 +33,10 @@ export default function StatCards({ stats }: {
                         className="bento-card flex flex-col justify-between group overflow-hidden min-h-[220px]"
                     >
                         <div className="flex items-start justify-between">
-                            <div className={cn("p-3 rounded-2xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-6", stat.bg)}>
-                                <CardIcon className={cn("w-5 h-5", stat.color)} />
+                            <div className={cn("p-3 rounded-2xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-6", `stat-icon-surface-${stat.tone}`)}>
+                                <CardIcon className={cn("w-5 h-5", `stat-icon-tone-${stat.tone}`)} />
                             </div>
-                            <div className="bg-emerald-500/10 text-emerald-600 text-[10px] font-black px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="stat-trend-badge text-[10px] font-black px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                                 +12%
                             </div>
                         </div>
@@ -49,7 +48,7 @@ export default function StatCards({ stats }: {
                         </div>
                         <div className="mt-6 pt-6 border-t border-border-light dark:border-white/5 flex items-center justify-between">
                             <span className="text-[9px] font-bold text-gray-text uppercase tracking-widest">Live Metrics</span>
-                            <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                            <div className="w-1.5 h-1.5 rounded-full stat-live-dot animate-pulse"></div>
                         </div>
                     </Link>
                 );

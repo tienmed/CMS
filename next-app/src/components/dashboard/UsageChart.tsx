@@ -15,7 +15,7 @@ interface UsageChartProps {
     data: { name: string; value: number }[];
 }
 
-const COLORS = ['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e'];
+const COLORS = ['#0d11e3', '#122ed5', '#164ac6', '#1b67b8', '#1f84a9', '#24a09b', '#28bd8c'];
 
 export default function UsageChart({ data }: UsageChartProps) {
     return (
@@ -36,7 +36,7 @@ export default function UsageChart({ data }: UsageChartProps) {
                         tick={{ fill: '#94a3b8', fontSize: 12 }}
                     />
                     <Tooltip
-                        cursor={{ fill: '#f8fafc' }}
+                        cursor={{ fill: '#eef4ff' }}
                         contentStyle={{
                             borderRadius: '12px',
                             border: 'none',

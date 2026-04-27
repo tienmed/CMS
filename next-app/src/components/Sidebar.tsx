@@ -39,7 +39,7 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
         <>
             <div className="px-8 py-10">
                 <div className="flex items-center gap-4 mb-2 group">
-                    <div className="w-12 h-12 rounded-2xl bg-brand-primary flex items-center justify-center text-white font-black text-2xl shadow-pro group-hover:scale-110 transition-all duration-500">C</div>
+                    <div className="w-12 h-12 rounded-2xl brand-gradient-bg flex items-center justify-center text-white font-black text-2xl shadow-pro group-hover:scale-110 transition-all duration-500">C</div>
                     <h1 className="text-2xl font-black tracking-tight text-navy">CECICS <span className="font-medium text-gray-text opacity-40">CMS</span></h1>
                 </div>
             </div>
@@ -55,14 +55,14 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
                             className={cn(
                                 "flex items-center gap-4 px-6 py-4 rounded-2xl transition-all group text-sm relative overflow-hidden",
                                 isActive
-                                    ? "bg-background dark:bg-white/5 text-navy font-black"
+                                    ? "brand-soft-surface text-navy font-black"
                                     : "text-gray-text font-bold hover:text-navy hover:bg-background/50"
                             )}
                         >
                             <item.icon className={cn("w-5 h-5 shrink-0 transition-all duration-300", isActive ? "text-brand-primary" : "text-gray-text group-hover:text-navy")} />
                             <span className="tracking-wide">{item.name}</span>
                             {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-primary rounded-r-full" />
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 sidebar-active-indicator rounded-r-full" />
                             )}
                         </Link>
                     );
@@ -81,14 +81,14 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
                                     className={cn(
                                         "flex items-center gap-4 px-6 py-4 rounded-2xl transition-all group text-sm relative overflow-hidden",
                                         isActive
-                                            ? "bg-background dark:bg-white/5 text-navy font-black"
+                                            ? "brand-soft-surface text-navy font-black"
                                             : "text-gray-text font-bold hover:text-navy hover:bg-background/50"
                                     )}
                                 >
                                     <item.icon className={cn("w-5 h-5 shrink-0 transition-all duration-300", isActive ? "text-brand-primary" : "text-gray-text group-hover:text-navy")} />
                                     <span className="tracking-wide">{item.name}</span>
                                     {isActive && (
-                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-primary rounded-r-full" />
+                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 sidebar-active-indicator rounded-r-full" />
                                     )}
                                 </Link>
                             );
