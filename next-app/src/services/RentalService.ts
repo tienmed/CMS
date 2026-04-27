@@ -35,13 +35,17 @@ class RentalService {
                 SELECT 
                     rt.id,
                     rt.rented_date as date, 
+                    rt.completed_date,
                     rt.ticket_no, 
                     rt.rented_full_name as renter,
                     rt.note,
                     COALESCE(d.name, 'N/A') as department_name,
                     CASE WHEN rt.completed_date IS NULL THEN 'rented' ELSE 'returned' END as status,
+                    rd.id as detail_id,
+                    rd.returned_at as item_returned_at,
                     e.name as equipment_name,
                     e.barcode as equipment_barcode,
+                    ei.id as item_id,
                     ei.barcode_stt,
                     es.name as item_status
                 FROM rental_ticket rt
@@ -63,6 +67,7 @@ class RentalService {
                     ticketsMap.set(row.id, {
                         id: row.id,
                         date: row.date,
+                        completed_date: row.completed_date,
                         ticket_no: row.ticket_no,
                         department_name: row.department_name,
                         renter: row.renter,
@@ -74,16 +79,55 @@ class RentalService {
 
                 const ticket = ticketsMap.get(row.id)!;
                 ticket.items.push({
+                    id: row.item_id,
+                    detail_id: row.detail_id,
                     equipment_name: row.equipment_name,
                     barcode: row.equipment_barcode,
                     barcode_stt: row.barcode_stt,
-                    status: row.item_status
+                    status: row.item_status,
+                    returned_at: row.item_returned_at
                 });
             }
 
             return Array.from(ticketsMap.values()).slice(0, 50);
         } catch (err: any) {
             throw new AppError(`Không thể lấy lịch sử sử dụng: ${err.message}`, 500, 'DB_QUERY_ERROR');
+        }
+    }
+
+    /**
+     * Generate next ticket number in format RT-YYYYMMLL
+     * where LL is the sequence number for the current month
+     */
+    async generateNextTicketNo(): Promise<string> {
+        try {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const prefix = `RT-${year}${month}`;
+
+            // Tìm mã lớn nhất có cùng prefix trong tháng này
+            const [rows] = await pool.query(
+                "SELECT ticket_no FROM rental_ticket WHERE ticket_no LIKE ? ORDER BY ticket_no DESC LIMIT 1",
+                [`${prefix}%`]
+            ) as any;
+
+            let nextSequence = 1;
+            if (rows.length > 0) {
+                const lastTicketNo = rows[0].ticket_no;
+                // Lấy phần số thứ tự ở cuối (có thể nhiều hơn 2 chữ số nếu vượt quá 99)
+                const lastSequenceStr = lastTicketNo.replace(prefix, '');
+                const lastSequence = parseInt(lastSequenceStr);
+                if (!isNaN(lastSequence)) {
+                    nextSequence = lastSequence + 1;
+                }
+            }
+
+            return `${prefix}${String(nextSequence).padStart(2, '0')}`;
+        } catch (error) {
+            console.error('Error generating ticket number:', error);
+            // Fallback to timestamp if DB error
+            return `RT-${Date.now().toString().slice(-6)}`;
         }
     }
 

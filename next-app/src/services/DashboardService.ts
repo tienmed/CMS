@@ -209,6 +209,79 @@ class DashboardService {
         const [rows] = await pool.query(query) as any;
         return rows as DetailedStat[];
     }
+
+    /**
+     * Fetch actual content of specific numbers for drill-down
+     */
+    async getDetailedItems(type: 'equipment' | 'items' | 'rentable' | 'non-rentable', group_code: string, level_code: string): Promise<any[]> {
+        let query = '';
+        const params = [group_code, level_code];
+
+        if (type === 'equipment') {
+            query = `
+                SELECT 
+                    e.name as equipment_name,
+                    SUBSTRING(e.barcode, 1, 2) as group_code,
+                    SUBSTRING(e.barcode, 3, 1) as level_code,
+                    '' as barcode_stt,
+                    'Operational' as status_name
+                FROM equipment e
+                WHERE e.deleted_at IS NULL AND e.barcode IS NOT NULL AND LENGTH(e.barcode) >= 3
+                  AND SUBSTRING(e.barcode, 1, 2) = ?
+                  AND SUBSTRING(e.barcode, 3, 1) = ?
+            `;
+        } else if (type === 'items') {
+            query = `
+                SELECT 
+                    e.name as equipment_name,
+                    SUBSTRING(e.barcode, 1, 2) as group_code,
+                    SUBSTRING(e.barcode, 3, 1) as level_code,
+                    ei.barcode_stt,
+                    es.name as status_name
+                FROM equipment_item ei
+                JOIN equipment e ON ei.equipment_id = e.id
+                JOIN equipment_status es ON ei.equipment_status_id = es.id
+                WHERE ei.deleted_at IS NULL AND e.barcode IS NOT NULL AND LENGTH(e.barcode) >= 3
+                  AND SUBSTRING(e.barcode, 1, 2) = ?
+                  AND SUBSTRING(e.barcode, 3, 1) = ?
+            `;
+        } else if (type === 'rentable') {
+            query = `
+                SELECT 
+                    e.name as equipment_name,
+                    SUBSTRING(e.barcode, 1, 2) as group_code,
+                    SUBSTRING(e.barcode, 3, 1) as level_code,
+                    ei.barcode_stt,
+                    es.name as status_name
+                FROM equipment_item ei
+                JOIN equipment e ON ei.equipment_id = e.id
+                JOIN equipment_status es ON ei.equipment_status_id = es.id
+                WHERE ei.deleted_at IS NULL AND es.is_rentable = 1 AND e.barcode IS NOT NULL AND LENGTH(e.barcode) >= 3
+                  AND SUBSTRING(e.barcode, 1, 2) = ?
+                  AND SUBSTRING(e.barcode, 3, 1) = ?
+            `;
+        } else if (type === 'non-rentable') {
+            query = `
+                SELECT 
+                    e.name as equipment_name,
+                    SUBSTRING(e.barcode, 1, 2) as group_code,
+                    SUBSTRING(e.barcode, 3, 1) as level_code,
+                    ei.barcode_stt,
+                    es.name as status_name
+                FROM equipment_item ei
+                JOIN equipment e ON ei.equipment_id = e.id
+                JOIN equipment_status es ON ei.equipment_status_id = es.id
+                WHERE ei.deleted_at IS NULL AND es.is_rentable = 0 AND e.barcode IS NOT NULL AND LENGTH(e.barcode) >= 3
+                  AND SUBSTRING(e.barcode, 1, 2) = ?
+                  AND SUBSTRING(e.barcode, 3, 1) = ?
+            `;
+        } else {
+            return [];
+        }
+
+        const [rows] = await pool.query(query, params) as any;
+        return rows;
+    }
 }
 
 export const dashboardService = DashboardService.getInstance();

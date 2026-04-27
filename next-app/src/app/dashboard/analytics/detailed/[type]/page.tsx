@@ -2,6 +2,7 @@ import { dashboardService } from '@/services/DashboardService';
 import { Package, Activity, CheckCircle2, AlertTriangle, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import AnalyticsCell from '@/components/analytics/AnalyticsCell';
 
 export const dynamic = 'force-dynamic';
 
@@ -130,24 +131,19 @@ export default async function DetailedAnalyticsPage({ params }: { params: Promis
                                                         </div>
                                                     </div>
                                                 </td>
-                                                {levels.map(l => (
-                                                    <td key={l} className="py-10 px-8 text-center border-l border-border-light/40 dark:border-white/5">
-                                                        <div className={cn(
-                                                            "inline-flex flex-col items-center justify-center min-w-[80px] py-3 rounded-2xl transition-all duration-500",
-                                                            matrix[g][l] > 0
-                                                                ? "bg-white dark:bg-white/5 shadow-pro ring-1 ring-border-light dark:ring-white/10 group-hover/row:scale-110 group-hover/row:ring-brand-primary/30"
-                                                                : "opacity-10 translate-y-2 grayscale group-hover/row:opacity-5 group-hover/row:translate-y-0 transition-all"
-                                                        )}>
-                                                            <span className={cn(
-                                                                "font-black text-xl tabular-nums tracking-tighter text-number leading-none",
-                                                                matrix[g][l] > 0 ? "text-navy" : "text-gray-text"
-                                                            )}>
-                                                                {matrix[g][l] > 0 ? matrix[g][l].toLocaleString() : '0'}
-                                                            </span>
-                                                            {matrix[g][l] > 0 && <span className="text-[8px] font-black text-gray-text uppercase mt-2 tracking-widest opacity-40">items</span>}
-                                                        </div>
-                                                    </td>
-                                                ))}
+                                                {levels.map((l, idx) => {
+                                                    const colorClasses = ['text-red-500', 'text-amber-500', 'text-emerald-500'];
+                                                    return (
+                                                        <AnalyticsCell
+                                                            key={l}
+                                                            type={type as any}
+                                                            groupCode={g}
+                                                            levelCode={l}
+                                                            value={matrix[g][l]}
+                                                            colorClass={colorClasses[idx]}
+                                                        />
+                                                    );
+                                                })}
                                                 <td className="py-10 px-10 text-right bg-background/20 dark:bg-white/5 border-l border-border-light dark:border-white/5">
                                                     <span className="text-3xl font-black text-navy tabular-nums tracking-tighter text-number leading-none group-hover/row:text-brand-primary group-hover/row:scale-110 transition-all inline-block">
                                                         {rowTotal.toLocaleString()}

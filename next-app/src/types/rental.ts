@@ -26,6 +26,7 @@ export interface RentalDetail {
 export interface UsageHistory {
     id: number; // ticket id
     date: Date;
+    completed_date?: Date | null;
     ticket_no: string;
     department_name: string;
     renter: string;

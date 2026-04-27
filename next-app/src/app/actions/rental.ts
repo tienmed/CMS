@@ -6,17 +6,20 @@ import { revalidatePath } from 'next/cache';
 import { RentalTicket } from '@/types/rental';
 
 export async function createRentalTicketAction(
-    ticket: Omit<RentalTicket, 'id' | 'created_by'>,
+    ticket: Omit<RentalTicket, 'id' | 'created_by' | 'ticket_no'>,
     itemIds: number[]
 ) {
     try {
+        const ticketNo = await rentalService.generateNextTicketNo();
         const fullTicket: Omit<RentalTicket, 'id'> = {
             ...ticket,
+            ticket_no: ticketNo,
             created_by: 1, // Giả định admin id = 1 cho đến khi có Auth
         };
 
         await rentalService.createRentalTicket(fullTicket, itemIds);
         revalidatePath('/dashboard/rental');
+        revalidatePath('/dashboard/history');
         return { success: true };
     } catch (err: any) {
         return { success: false, error: err.message };
@@ -43,6 +46,7 @@ export async function returnItemsAction(ticketId: number, detailIds: number[]) {
     try {
         const sessionCount = await rentalService.returnItems(ticketId, detailIds);
         revalidatePath('/dashboard/rental');
+        revalidatePath('/dashboard/history');
         revalidatePath('/dashboard');
         return { success: true, sessionCount };
     } catch (err: any) {

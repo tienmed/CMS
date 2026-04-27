@@ -111,7 +111,6 @@ export default function CreateRentalModal({ departments, rentableItems, onSucces
 
     const result = await createRentalTicketAction(
       {
-        ticket_no: `RT-${Date.now().toString().slice(-6)}`,
         rented_full_name: formData.renterName,
         rented_by: parseInt(formData.departmentId),
         rented_date: new Date(),

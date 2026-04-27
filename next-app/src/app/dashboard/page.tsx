@@ -34,7 +34,7 @@ export default async function DashboardPage() {
     ];
 
     return (
-        <div className="flex flex-col gap-4 h-full max-h-[calc(100vh-140px)] overflow-hidden font-sans">
+        <div className="dashboard-v2-container">
             {/* Database Status Warning */}
             {!dbStatus.success && (
                 <div className="shrink-0 db-status-surface border p-4 rounded-2xl flex items-center gap-3 shadow-sm animate-pulse">
@@ -55,17 +55,17 @@ export default async function DashboardPage() {
             </div>
 
             {/* Main Distribution Grids - Bento Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+            <div className="dashboard-v2-grid">
                 {/* Group Distribution - Larger Card */}
-                <div className="lg:col-span-2 bento-card brand-surface-gradient flex flex-col min-h-[400px]">
+                <div className="dashboard-v2-bento-main">
                     <div className="flex items-center justify-between mb-12 shrink-0">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl brand-soft-surface dashboard-group-icon flex items-center justify-center">
+                            <div className="dashboard-v2-header-icon">
                                 <Layers className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="font-black text-navy text-2xl tracking-tighter uppercase font-sans">Phân bổ Nhóm</h3>
-                                <p className="text-[10px] font-bold text-gray-text uppercase tracking-widest mt-1 italic">Structural Category Map</p>
+                                <h3 className="dashboard-v2-title">Phân bổ Nhóm</h3>
+                                <p className="dashboard-v2-subtitle">Structural Category Map</p>
                             </div>
                         </div>
                     </div>
@@ -106,14 +106,14 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Level Distribution - Vertical Bento Card */}
-                <div className="bento-card brand-surface-gradient flex flex-col min-h-[400px]">
+                <div className="dashboard-v2-bento-side">
                     <div className="flex items-center gap-4 mb-12 shrink-0">
-                        <div className="w-12 h-12 rounded-2xl brand-soft-surface dashboard-level-icon flex items-center justify-center">
+                        <div className="dashboard-v2-header-icon">
                             <PieChartIcon className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="font-black text-navy text-2xl tracking-tighter uppercase">Mức độ</h3>
-                            <p className="text-[10px] font-bold text-gray-text uppercase tracking-widest mt-1 italic">Priority Indices</p>
+                            <h3 className="dashboard-v2-title">Mức độ</h3>
+                            <p className="dashboard-v2-subtitle">Priority Indices</p>
                         </div>
                     </div>
 

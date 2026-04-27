@@ -23,32 +23,32 @@ export default function StatCards({ stats }: {
     }[]
 }) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+        <div className="stat-cards-grid">
             {stats.map((stat) => {
                 const CardIcon = ICON_MAP[stat.icon] || Activity;
                 return (
                     <Link
                         key={stat.name}
                         href={`/dashboard/analytics/detailed/${stat.type}`}
-                        className="bento-card flex flex-col justify-between group overflow-hidden min-h-[220px]"
+                        className="stat-card-shell group"
                     >
                         <div className="flex items-start justify-between">
-                            <div className={cn("p-3 rounded-2xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-6", `stat-icon-surface-${stat.tone}`)}>
+                            <div className={cn("stat-card-icon-wrap", `stat-icon-surface-${stat.tone}`)}>
                                 <CardIcon className={cn("w-5 h-5", `stat-icon-tone-${stat.tone}`)} />
                             </div>
-                            <div className="stat-trend-badge text-[10px] font-black px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="stat-badge">
                                 +12%
                             </div>
                         </div>
                         <div className="mt-8">
-                            <p className="text-[11px] font-black text-gray-text uppercase tracking-[0.2em] mb-2">{stat.name}</p>
-                            <h3 suppressHydrationWarning className="text-6xl font-black text-navy tracking-tighter text-number">
+                            <p className="stat-card-title">{stat.name}</p>
+                            <h3 suppressHydrationWarning className="stat-card-value text-number">
                                 {stat.value.toLocaleString()}
                             </h3>
                         </div>
-                        <div className="mt-6 pt-6 border-t border-border-light dark:border-white/5 flex items-center justify-between">
-                            <span className="text-[9px] font-bold text-gray-text uppercase tracking-widest">Live Metrics</span>
-                            <div className="w-1.5 h-1.5 rounded-full stat-live-dot animate-pulse"></div>
+                        <div className="stat-card-footer">
+                            <span className="stat-footer-text">Live Metrics</span>
+                            <div className="stat-live-dot"></div>
                         </div>
                     </Link>
                 );
