@@ -37,13 +37,13 @@ export default async function DashboardPage() {
         <div className="flex flex-col gap-4 h-full max-h-[calc(100vh-140px)] overflow-hidden font-sans">
             {/* Database Status Warning */}
             {!dbStatus.success && (
-                <div className="shrink-0 bg-red-50 border border-red-200 p-4 rounded-2xl flex items-center gap-3 text-red-700 shadow-sm animate-pulse">
+                <div className="shrink-0 db-status-surface border p-4 rounded-2xl flex items-center gap-3 shadow-sm animate-pulse">
                     <AlertTriangle className="w-5 h-5 flex-shrink-0" />
                     <div className="flex-1 text-sm">
                         <p className="font-bold">Lỗi kết nối Cơ sở dữ liệu!</p>
                         <p className="opacity-80">Vui lòng kiểm tra biến môi trường MYSQL_HOST, USER, PASS, DB trên Vercel. Lỗi: {dbStatus.error}</p>
                     </div>
-                    <Link href="https://vercel.com/dashboard" target="_blank" className="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-700 transition-colors">
+                    <Link href="https://vercel.com/dashboard" target="_blank" className="db-status-action px-4 py-2 rounded-xl text-xs font-bold transition-colors">
                         Mở Vercel
                     </Link>
                 </div>
@@ -76,12 +76,16 @@ export default async function DashboardPage() {
                             const pct = total > 0 ? ((g.count / total) * 100).toFixed(1) : '0';
                             const colors: Record<string, string> = {
 
+                                'MH': 'dist-group-mh',
+                                'TB': 'dist-group-tb',
+                                'VP': 'dist-group-vp',
+
                             };
                             return (
                                 <Link key={g.group_code} href={`/dashboard/analytics/group/${g.group_code}`} className="block hover:bg-slate-50 p-4 rounded-2xl transition-all group border border-transparent">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-3">
-                                            <div className={cn("w-2 h-2 rounded-full", colors[g.group_code] || 'bg-slate-300')} />
+                                            <div className={cn("w-2 h-2 rounded-full", colors[g.group_code] || 'dist-group-fallback')} />
                                             <span className="text-sm font-bold text-gray-text">{g.label}</span>
                                         </div>
                                         <div className="flex items-baseline gap-2">
@@ -91,7 +95,7 @@ export default async function DashboardPage() {
                                     </div>
                                     <div className="w-full bg-slate-50 rounded-full h-1.5 overflow-hidden">
                                         <div
-                                            className={cn("h-full rounded-full transition-all duration-1000", colors[g.group_code] || 'bg-slate-300')}
+                                            className={cn("h-full rounded-full transition-all duration-1000", colors[g.group_code] || 'dist-group-fallback')}
                                             style={{ width: `${pct}%` }}
                                         />
                                     </div>
@@ -117,10 +121,12 @@ export default async function DashboardPage() {
                         {levelDist.map((l) => {
                             const total = levelDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((l.count / total) * 100).toFixed(1) : '0';
-                            const styles: Record<string, { color: string; bg: string; dot: string }> = {
+                            const styles: Record<string, { col                                'H': { color: 'dist-level-high-text', bg: 'dist-level-high-bg', dot: 'dist-level-high-dot' },
+                                'M': { color: 'dist-level-medium-text', bg: 'dist-level-medium-bg', dot: 'dist-level-medium-dot' },
+                                'L': { color: 'dist-level-low-text', bg: 'dist-level-low-bg', dot: 'dist-level-low-dot' },
 
                             };
-                            const s = styles[l.level_code] || { color: 'text-slate-400', bg: 'bg-slate-400', dot: 'bg-slate-400' };
+                            const s = styles[l.level_code] || { color: 'dist-level-fallback-text', bg: 'dist-level-fallback-bg', dot: 'dist-level-fallback-dot' };
                             return (
                                 <Link key={l.level_code} href={`/dashboard/analytics/level/${l.level_code}`} className="block group">
                                     <div className="flex items-end justify-between mb-3">

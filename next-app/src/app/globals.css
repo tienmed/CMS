@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F5F5F7;
-  --foreground: #1D1D1F;
+
+  --background: #EEEEEE;
+  --foreground: #0d11e3;
+
   --brand-primary: #1b67b8;
   --brand-1: #0d11e3;
   --brand-2: #122ed5;
@@ -11,10 +13,12 @@
   --brand-5: #1f84a9;
   --brand-6: #24a09b;
   --brand-7: #28bd8c;
-  --brand-secondary: #000000;
-  --text-main: #1D1D1F;
-  --text-muted: #86868B;
-  --border-soft: #E5E7EB;
+
+  --brand-secondary: #122ed5;
+  --text-main: #0d11e3;
+  --text-muted: #1b67b8;
+  --border-soft: #1f84a955;
+
   --white: #ffffff;
 
   --radius-pro: 24px;
@@ -45,11 +49,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000;
-    --foreground: #F5F5F7;
-    --text-main: #F5F5F7;
-    --text-muted: #86868B;
-    --border-soft: #1D1D1F;
+    --background: #0d11e3;
+    --foreground: #EEEEEE;
+    --text-main: #EEEEEE;
+    --text-muted: #1b67b8;
+    --border-soft: #24a09b66;
     --white: #111111;
   }
 }
@@ -88,10 +92,73 @@ body {
 }
 
 .bento-card {
-  @apply bg-white dark:bg-[#111111] rounded-[2rem] border border-border-light dark:border-border-light p-8 shadow-soft hover:shadow-pro transition-all duration-500;
+
+  @apply bg-white dark:bg-brand-1/20 rounded-[2rem] border border-border-light dark:border-brand-3/30 p-8 shadow-soft hover:shadow-pro transition-all duration-500;
+
 }
 
 .brand-surface-gradient {
   background: linear-gradient(135deg, color-mix(in srgb, var(--brand-1) 10%, white), color-mix(in srgb, var(--brand-7) 14%, white));
 }
+
+
+
+.brand-gradient-bg {
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-6));
+}
+
+.brand-gradient-text {
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-7));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-soft-surface {
+  background: color-mix(in srgb, var(--brand-5) 8%, white);
+  border-color: color-mix(in srgb, var(--brand-5) 20%, white);
+}
+
+
+.dashboard-group-icon {
+  @apply text-brand-3;
+}
+
+.dashboard-level-icon {
+  @apply text-brand-6;
+}
+
+.stat-icon-surface-equipment { @apply bg-brand-1/10; }
+.stat-icon-tone-equipment { @apply text-brand-2; }
+.stat-icon-surface-items { @apply bg-brand-2/10; }
+.stat-icon-tone-items { @apply text-brand-3; }
+.stat-icon-surface-open-tickets { @apply bg-brand-3/10; }
+.stat-icon-tone-open-tickets { @apply text-brand-4; }
+.stat-icon-surface-rentable { @apply bg-brand-6/10; }
+.stat-icon-tone-rentable { @apply text-brand-6; }
+.stat-icon-surface-non-rentable { @apply bg-brand-5/10; }
+.stat-icon-tone-non-rentable { @apply text-brand-5; }
+
+.dist-group-mh { @apply bg-brand-2; }
+.dist-group-tb { @apply bg-brand-4; }
+.dist-group-vp { @apply bg-brand-6; }
+
+.dist-level-high-text { @apply text-brand-2; }
+.dist-level-high-bg, .dist-level-high-dot { @apply bg-brand-2; }
+.dist-level-medium-text { @apply text-brand-4; }
+.dist-level-medium-bg, .dist-level-medium-dot { @apply bg-brand-4; }
+.dist-level-low-text { @apply text-brand-6; }
+.dist-level-low-bg, .dist-level-low-dot { @apply bg-brand-6; }
+
+
+.stat-trend-badge { @apply bg-brand-7/15 text-brand-6; }
+.stat-live-dot { @apply bg-brand-3; box-shadow: 0 0 8px rgba(22,74,198,0.45); }
+.sidebar-active-indicator { @apply bg-brand-primary; }
+
+.dist-group-fallback { @apply bg-brand-7/40; }
+.dist-level-fallback-text { @apply text-brand-4/50; }
+.dist-level-fallback-bg, .dist-level-fallback-dot { @apply bg-brand-7/40; }
+.db-status-surface { @apply bg-brand-1/10 border-brand-2/30 text-brand-3; }
+.db-status-action { @apply bg-brand-3 hover:bg-brand-2 text-white; }
+.sidebar-logout-hover { @apply hover:bg-brand-1/10 hover:text-brand-3 hover:border-brand-2/20; }
 

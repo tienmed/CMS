@@ -98,7 +98,7 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
             </nav>
 
             <div className="p-8">
-                <Link href="/logout" className="flex items-center gap-4 px-8 py-5 w-full rounded-[1.5rem] text-gray-text hover:bg-red-50 hover:text-red-500 transition-all text-[10px] font-black uppercase tracking-[0.2em] group border border-transparent hover:border-red-100">
+                <Link href="/logout" className="flex items-center gap-4 px-8 py-5 w-full rounded-[1.5rem] text-gray-text sidebar-logout-hover transition-all text-[10px] font-black uppercase tracking-[0.2em] group border border-transparent">
                     <LogOut className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     <span>Deactivate Session</span>
                 </Link>
