@@ -2,25 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const AUTH_COOKIE_NAME = 'cecics_session';
 
-function hasValidSessionToken(token?: string): boolean {
+function hasValidSessionToken(token?: string): { valid: boolean; reason?: string; decoded?: any } {
     if (!token) {
-        console.warn('Middleware: [MISSING_TOKEN] No session cookie detected');
-        return false;
+        return { valid: false, reason: 'MISSING_COOKIE' };
     }
 
-    // Clean and split
     const cleanToken = token.trim();
     const parts = cleanToken.split('.');
 
     if (parts.length < 2) {
-        console.error('Middleware: [INVALID_FORMAT] Token parts < 2', { partsCount: parts.length });
-        return false;
+        return { valid: false, reason: 'INVALID_FORMAT', decoded: { parts: parts.length } };
     }
 
     const payload = parts[0];
 
     try {
-        // Robust Base64Url to Base64 with padding
         let base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
         const pad = base64.length % 4;
         if (pad) {
@@ -31,55 +27,57 @@ function hasValidSessionToken(token?: string): boolean {
         const decoded = JSON.parse(decodedPayload);
 
         if (!decoded?.exp) {
-            console.error('Middleware: [MISSING_EXP] No expiration in payload');
-            return false;
+            return { valid: false, reason: 'MISSING_EXP', decoded };
         }
 
         const now = Math.floor(Date.now() / 1000);
-        const isExpired = decoded.exp < now;
-
-        if (isExpired) {
-            console.warn(`Middleware: [EXPIRED] tokenExp=${decoded.exp} now=${now} diffS=${now - decoded.exp}`);
-            return false;
+        if (decoded.exp < now) {
+            return { valid: false, reason: 'EXPIRED', decoded: { ...decoded, now } };
         }
 
-        return true;
+        return { valid: true, decoded };
     } catch (error: any) {
-        console.error('Middleware: [EXCEPTION] Token parse failed', {
-            message: error.message,
-            payloadLength: payload.length
-        });
-        return false;
+        return { valid: false, reason: 'PARSE_ERROR', decoded: { message: error.message } };
     }
 }
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Extract cookie - handle potential variations
+    // Ignore static assets
+    if (pathname.startsWith('/_next') || pathname.includes('.')) {
+        return NextResponse.next();
+    }
+
     const cookie = request.cookies.get(AUTH_COOKIE_NAME);
     const token = cookie?.value;
+    const { valid, reason, decoded } = hasValidSessionToken(token);
 
-    const hasSession = hasValidSessionToken(token);
-
-    // Diagnostic log for deployment debugging
-    if (process.env.NODE_ENV === 'production' || pathname.startsWith('/dashboard')) {
-        console.log(`Middleware Audit [${new Date().toISOString()}]: path=${pathname} hasCookie=${!!cookie} hasToken=${!!token} tokenLen=${token?.length || 0} hasSession=${hasSession}`);
+    // CRITICAL DIAGNOSTIC LOG
+    // This will appear in Vercel Logs
+    console.log(`[MW_AUDIT] ${new Date().toISOString()} | Path: ${pathname} | Status: ${valid ? 'OK' : 'FAIL'} | Reason: ${reason} | Cookie: ${!!cookie} | TokenLen: ${token?.length || 0}`);
+    if (!valid && token) {
+        console.log(`[MW_ERROR_DATA] Token preview: ${token.slice(0, 10)}... | Decoded raw: ${JSON.stringify(decoded)}`);
     }
 
     const isLoginPage = pathname === '/login';
     const isDashboardPage = pathname === '/dashboard' || pathname.startsWith('/dashboard/');
 
-    if (isDashboardPage && !hasSession) {
-        console.log(`Middleware: [REDIRECT_LOGIN] Path=${pathname} - Access Denied`);
+    if (isDashboardPage && !valid) {
         const url = request.nextUrl.clone();
         url.pathname = '/login';
-        url.searchParams.set('from', pathname); // Diagnostic parameter
-        return NextResponse.redirect(url);
+        url.searchParams.set('reason', reason || 'unknown');
+        url.searchParams.set('from', pathname);
+
+        // Clear the bad cookie to force a clean slate
+        const response = NextResponse.redirect(url);
+        if (cookie) {
+            response.cookies.delete(AUTH_COOKIE_NAME);
+        }
+        return response;
     }
 
-    if (isLoginPage && hasSession) {
-        console.log('Middleware: [REDIRECT_DASHBOARD] Already logged in');
+    if (isLoginPage && valid) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
