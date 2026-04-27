@@ -6,14 +6,21 @@ export const dynamic = 'force-dynamic';
 export default async function LoginPage({
     searchParams,
 }: {
-    searchParams: Promise<{ error?: string }>;
+    searchParams: Promise<{ error?: string; msg?: string }>;
 }) {
-    const { error } = await searchParams;
-    const errorMessage = error === 'invalid_credentials'
-        ? 'Sai tài khoản hoặc mật khẩu.'
-        : error === 'missing_credentials'
-            ? 'Vui lòng nhập tài khoản và mật khẩu.'
-            : '';
+    const { error, msg } = await searchParams;
+    let errorMessage = '';
+
+    if (error === 'invalid_credentials') {
+        errorMessage = 'Sai tài khoản hoặc mật khẩu.';
+    } else if (error === 'missing_credentials') {
+        errorMessage = 'Vui lòng nhập tài khoản và mật khẩu.';
+    } else if (error === 'server_error') {
+        errorMessage = `Lỗi hệ thống: ${msg ? decodeURIComponent(msg) : 'Vui lòng kiểm tra kết nối CSDL.'}`;
+        if (errorMessage.includes('ECONNREFUSED') || errorMessage.includes('ETIMEDOUT') || errorMessage.includes('ENOTFOUND')) {
+            errorMessage = 'Không thể kết nối đến cơ sở dữ liệu. Vui lòng kiểm tra biến môi trường hoặc cấu hình mạng trên Vercel.';
+        }
+    }
 
     return (
         <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">

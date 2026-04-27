@@ -12,7 +12,7 @@ export default async function DashboardLayout({
 
     return (
         <div className="h-screen bg-[#f8fafc] overflow-hidden flex flex-col lg:flex-row">
-            <Sidebar />
+            <Sidebar user={user} />
             <main className="flex-1 h-screen lg:ml-72 flex flex-col transition-all duration-300 min-w-0">
                 <header className="shrink-0 sticky top-4 z-30 mx-4 lg:mx-8 h-16 lg:h-20 bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-[2rem] flex items-center px-6 lg:px-10 mt-4 transition-all duration-300">
                     <div className="flex-1">

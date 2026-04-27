@@ -4,7 +4,8 @@ const requiredEnvVars = ['MYSQL_HOST', 'MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_DA
 const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
 if (missingEnvVars.length > 0) {
-    console.error(`Missing database environment variables: ${missingEnvVars.join(', ')}`);
+    const errorMsg = `DATABASE CONFIGURATION ERROR: Missing environment variables: ${missingEnvVars.join(', ')}`;
+    console.error(errorMsg);
 }
 
 const pool = mysql.createPool({
@@ -14,7 +15,8 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_DATABASE || 'cms',
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    connectTimeout: 10000 // 10 seconds timeout
 });
 
 export const withTransaction = async <T>(callback: (connection: mysql.PoolConnection) => Promise<T>): Promise<T> => {
@@ -32,13 +34,19 @@ export const withTransaction = async <T>(callback: (connection: mysql.PoolConnec
     }
 };
 
-export const testConnection = async (): Promise<{ success: boolean; error?: string }> => {
+export const testConnection = async (): Promise<{ success: boolean; error?: string; code?: string }> => {
     try {
         const connection = await pool.getConnection();
         connection.release();
         return { success: true };
     } catch (error: any) {
-        return { success: false, error: error.message };
+        console.error('Database Connection Failure:', {
+            message: error.message,
+            code: error.code,
+            host: process.env.MYSQL_HOST,
+            user: process.env.MYSQL_USER
+        });
+        return { success: false, error: error.message, code: error.code };
     }
 };
 

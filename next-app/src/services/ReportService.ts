@@ -22,10 +22,19 @@ class ReportService {
      */
     async getEquipmentByLevel(): Promise<ReportData[]> {
         const query = `
-      SELECT level as category, COUNT(*) as count 
-      FROM equipment 
-      GROUP BY level
-    `;
+            SELECT 
+                CASE SUBSTRING(barcode, 3, 1)
+                    WHEN 'H' THEN 'High'
+                    WHEN 'M' THEN 'Medium'
+                    WHEN 'L' THEN 'Low'
+                    ELSE 'Khác'
+                END as category,
+                COUNT(*) as count 
+            FROM equipment 
+            WHERE deleted_at IS NULL AND barcode IS NOT NULL AND LENGTH(barcode) >= 3
+            GROUP BY category
+            ORDER BY count DESC
+        `;
         const [rows] = await pool.query(query);
         return rows as ReportData[];
     }
@@ -34,14 +43,9 @@ class ReportService {
      * Thống kê thiết bị theo hãng sản xuất
      */
     async getEquipmentByManufacturer(): Promise<ReportData[]> {
-        const query = `
-      SELECT manufacturer as category, COUNT(*) as count 
-      FROM equipment 
-      WHERE manufacturer IS NOT NULL 
-      GROUP BY manufacturer
-    `;
-        const [rows] = await pool.query(query);
-        return rows as ReportData[];
+        // Manufacturer data is not in a separate column yet, potentially in 'note'
+        // Returning empty for now to avoid crash
+        return [];
     }
 
     /**
