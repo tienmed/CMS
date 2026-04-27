@@ -3,7 +3,14 @@
 :root {
   --background: #F5F5F7;
   --foreground: #1D1D1F;
-  --brand-primary: #6366F1;
+  --brand-primary: #1b67b8;
+  --brand-1: #0d11e3;
+  --brand-2: #122ed5;
+  --brand-3: #164ac6;
+  --brand-4: #1b67b8;
+  --brand-5: #1f84a9;
+  --brand-6: #24a09b;
+  --brand-7: #28bd8c;
   --brand-secondary: #000000;
   --text-main: #1D1D1F;
   --text-muted: #86868B;
@@ -18,6 +25,13 @@
   --color-foreground: var(--foreground);
   --color-brand-primary: var(--brand-primary);
   --color-brand-secondary: var(--brand-secondary);
+  --color-brand-1: var(--brand-1);
+  --color-brand-2: var(--brand-2);
+  --color-brand-3: var(--brand-3);
+  --color-brand-4: var(--brand-4);
+  --color-brand-5: var(--brand-5);
+  --color-brand-6: var(--brand-6);
+  --color-brand-7: var(--brand-7);
   --color-navy: var(--text-main);
   --color-gray-text: var(--text-muted);
   --color-border-light: var(--border-soft);
@@ -75,4 +89,8 @@ body {
 
 .bento-card {
   @apply bg-white dark:bg-[#111111] rounded-[2rem] border border-border-light dark:border-border-light p-8 shadow-soft hover:shadow-pro transition-all duration-500;
+}
+
+.brand-surface-gradient {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-1) 10%, white), color-mix(in srgb, var(--brand-7) 14%, white));
 }

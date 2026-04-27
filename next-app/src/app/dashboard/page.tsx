@@ -57,7 +57,7 @@ export default async function DashboardPage() {
             {/* Main Distribution Grids - Bento Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
                 {/* Group Distribution - Larger Card */}
-                <div className="lg:col-span-2 bento-card flex flex-col min-h-[400px]">
+                <div className="lg:col-span-2 bento-card brand-surface-gradient flex flex-col min-h-[400px]">
                     <div className="flex items-center justify-between mb-12 shrink-0">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-brand-primary">
@@ -75,9 +75,9 @@ export default async function DashboardPage() {
                             const total = groupDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((g.count / total) * 100).toFixed(1) : '0';
                             const colors: Record<string, string> = {
-                                'MH': 'bg-brand-primary',
-                                'TB': 'bg-emerald-500',
-                                'VP': 'bg-amber-500',
+                                'MH': 'bg-[#122ed5]',
+                                'TB': 'bg-[#1b67b8]',
+                                'VP': 'bg-[#24a09b]',
                             };
                             return (
                                 <Link key={g.group_code} href={`/dashboard/analytics/group/${g.group_code}`} className="block hover:bg-slate-50 p-4 rounded-2xl transition-all group border border-transparent">
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Level Distribution - Vertical Bento Card */}
-                <div className="bento-card flex flex-col min-h-[400px]">
+                <div className="bento-card brand-surface-gradient flex flex-col min-h-[400px]">
                     <div className="flex items-center gap-4 mb-12 shrink-0">
                         <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center text-teal-600">
                             <PieChartIcon className="w-6 h-6" />
@@ -120,9 +120,9 @@ export default async function DashboardPage() {
                             const total = levelDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((l.count / total) * 100).toFixed(1) : '0';
                             const styles: Record<string, { color: string; bg: string; dot: string }> = {
-                                'H': { color: 'text-red-600', bg: 'bg-red-500', dot: 'bg-red-500' },
-                                'M': { color: 'text-amber-600', bg: 'bg-amber-500', dot: 'bg-amber-500' },
-                                'L': { color: 'text-emerald-600', bg: 'bg-emerald-500', dot: 'bg-emerald-500' },
+                                'H': { color: 'text-[#122ed5]', bg: 'bg-[#122ed5]', dot: 'bg-[#122ed5]' },
+                                'M': { color: 'text-[#1b67b8]', bg: 'bg-[#1b67b8]', dot: 'bg-[#1b67b8]' },
+                                'L': { color: 'text-[#24a09b]', bg: 'bg-[#24a09b]', dot: 'bg-[#24a09b]' },
                             };
                             const s = styles[l.level_code] || { color: 'text-slate-400', bg: 'bg-slate-400', dot: 'bg-slate-400' };
                             return (
