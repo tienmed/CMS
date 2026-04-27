@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { authCookieName, authCookieTtlSeconds } from '@/lib/auth';
 
-const AUTH_COOKIE_NAME = 'cecics_session';
+const AUTH_COOKIE_NAME = authCookieName;
+const AUTH_COOKIE_MAX_AGE = authCookieTtlSeconds;
 
 function hasValidSessionToken(token?: string): { valid: boolean; reason?: string; decoded?: any } {
     if (!token) {
@@ -81,9 +83,21 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
-    return NextResponse.next();
+    // SUCCESS: Continue to page, but refresh cookie to ensure persistence
+    const response = NextResponse.next();
+    if (valid && token) {
+        response.cookies.set(AUTH_COOKIE_NAME, token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true, // Force secure on Vercel
+            maxAge: AUTH_COOKIE_MAX_AGE,
+            path: '/',
+        });
+    }
+
+    return response;
 }
 
 export const config = {
-    matcher: ['/login', '/dashboard/:path*'],
+    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
