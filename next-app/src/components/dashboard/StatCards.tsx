@@ -24,29 +24,32 @@ export default function StatCards({ stats }: {
     }[]
 }) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
             {stats.map((stat) => {
                 const CardIcon = ICON_MAP[stat.icon] || Activity;
                 return (
                     <Link
                         key={stat.name}
                         href={`/dashboard/analytics/detailed/${stat.type}`}
-                        className="bg-white/70 backdrop-blur-md p-4 rounded-3xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all cursor-pointer group hover:border-blue-200/50 hover:-translate-y-1 block relative overflow-hidden"
+                        className="bento-card flex flex-col justify-between group overflow-hidden min-h-[220px]"
                     >
-                        <div className="absolute top-[-10px] right-[-10px] p-6 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none">
-                            <CardIcon className="w-28 h-28 rotate-12" />
-                        </div>
-
-                        <div className="flex items-center justify-between mb-2 relative z-10">
-                            <div className={cn("p-2 rounded-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3", stat.bg, "shadow-sm")}>
+                        <div className="flex items-start justify-between">
+                            <div className={cn("p-3 rounded-2xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-6", stat.bg)}>
                                 <CardIcon className={cn("w-5 h-5", stat.color)} />
                             </div>
-                            <span className="text-[9px] font-black text-slate-400 bg-slate-100/50 px-2 py-1 rounded-full uppercase tracking-widest leading-none border border-slate-100 backdrop-blur-sm relative z-20">Chi tiết</span>
+                            <div className="bg-emerald-500/10 text-emerald-600 text-[10px] font-black px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                +12%
+                            </div>
                         </div>
-
-                        <div className="relative z-10">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{stat.name}</p>
-                            <h3 suppressHydrationWarning className="text-2xl font-black text-slate-900 tracking-tighter">{stat.value.toLocaleString()}</h3>
+                        <div className="mt-8">
+                            <p className="text-[11px] font-black text-gray-text uppercase tracking-[0.2em] mb-2">{stat.name}</p>
+                            <h3 suppressHydrationWarning className="text-6xl font-black text-navy tracking-tighter text-number">
+                                {stat.value.toLocaleString()}
+                            </h3>
+                        </div>
+                        <div className="mt-6 pt-6 border-t border-border-light dark:border-white/5 flex items-center justify-between">
+                            <span className="text-[9px] font-bold text-gray-text uppercase tracking-widest">Live Metrics</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
                         </div>
                     </Link>
                 );

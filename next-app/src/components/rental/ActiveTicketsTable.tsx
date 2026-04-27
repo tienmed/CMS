@@ -49,60 +49,92 @@ export default function ActiveTicketsTable({ initialTickets }: ActiveTicketsTabl
 
     return (
         <>
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="font-bold text-slate-800">Danh sách phiếu đang hoạt động</h3>
-                    <div className="relative">
-                        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <div className="bento-card !p-0 flex flex-col min-h-0 overflow-hidden">
+                <div className="px-10 py-10 border-b border-border-light dark:border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-8 bg-background/20 dark:bg-white/5">
+                    <div>
+                        <h3 className="text-2xl font-black text-navy tracking-tighter uppercase whitespace-nowrap">Active Queue</h3>
+                        <p className="text-[10px] font-black text-gray-text uppercase tracking-[0.3em] mt-2 opacity-50 italic">Handover Tracking Subsystem</p>
+                    </div>
+                    <div className="relative group/search w-full max-w-md">
+                        <Search className="w-5 h-5 text-gray-text absolute left-6 top-1/2 -translate-y-1/2 group-focus-within/search:text-brand-primary transition-colors duration-300" />
                         <input
                             type="text"
-                            placeholder="Tìm theo số phiếu / người mượn..."
-                            className="pl-9 pr-4 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 w-64"
+                            placeholder="Mã phiếu / Định danh người mượn..."
+                            className="pl-16 pr-8 h-16 rounded-[1.5rem] border border-transparent bg-white dark:bg-black/40 text-sm font-bold text-navy focus:outline-none focus:ring-8 focus:ring-brand-primary/5 focus:border-brand-primary/20 transition-all w-full shadow-sm placeholder:text-gray-text/30"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                 </div>
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="bg-slate-50/50">
-                            <th className="px-6 py-4 font-semibold text-slate-500 text-sm uppercase tracking-wider">Số phiếu</th>
-                            <th className="px-6 py-4 font-semibold text-slate-500 text-sm uppercase tracking-wider">Người mượn</th>
-                            <th className="px-6 py-4 font-semibold text-slate-500 text-sm uppercase tracking-wider">Ngày mượn</th>
-                            <th className="px-6 py-4 font-semibold text-slate-500 text-sm uppercase tracking-wider text-right">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                        {filteredTickets.length > 0 ? (
-                            filteredTickets.map((ticket) => (
-                                <tr key={ticket.id} className="hover:bg-slate-50/80 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <span className="font-mono font-bold text-slate-900">{ticket.ticket_no}</span>
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-slate-600 font-medium">{ticket.rented_full_name}</td>
-                                    <td className="px-6 py-4 text-sm text-slate-500">
-                                        {new Date(ticket.rented_date).toLocaleDateString('vi-VN')}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button
-                                            onClick={() => setSelectedTicket({ id: ticket.id, no: ticket.ticket_no })}
-                                            className="text-blue-600 hover:text-blue-700 font-bold text-sm flex items-center gap-1 ml-auto group-hover:scale-105 transition-transform"
-                                        >
-                                            <RotateCcw className="w-3.5 h-3.5" />
-                                            Ghi nhận trả
-                                        </button>
+
+                <div className="overflow-x-auto flex-1 custom-scrollbar">
+                    <table className="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr className="bg-background/10 dark:bg-white/5">
+                                <th className="px-10 py-8 text-[11px] font-black text-gray-text uppercase tracking-[0.4em]">Ticket Identifier</th>
+                                <th className="px-10 py-8 text-[11px] font-black text-gray-text uppercase tracking-[0.4em]">Borrower Entity</th>
+                                <th className="px-10 py-8 text-[11px] font-black text-gray-text uppercase tracking-[0.4em]">Handover Matrix</th>
+                                <th className="px-10 py-8 text-[11px] font-black text-navy uppercase tracking-[0.4em] text-right">System Logic</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border-light dark:divide-white/5">
+                            {filteredTickets.length > 0 ? (
+                                filteredTickets.map((ticket) => (
+                                    <tr key={ticket.id} className="group/row hover:bg-slate-50/50 dark:hover:bg-white/5 transition-all cursor-default">
+                                        <td className="px-10 py-10">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-brand-primary animate-pulse shadow-[0_0_12px_rgba(99,102,241,0.6)]"></div>
+                                                <span className="font-mono font-black text-navy tracking-wider text-lg">{ticket.ticket_no}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-10 py-10">
+                                            <div className="flex flex-col">
+                                                <span className="text-lg font-black text-navy tracking-tight uppercase group-hover/row:text-brand-primary transition-all duration-300">{ticket.rented_full_name}</span>
+                                                <span className="text-[10px] font-black text-gray-text uppercase tracking-widest mt-1 opacity-50">Verified Operational Staff</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-10 py-10">
+                                            <div className="flex flex-col">
+                                                <span className="text-base font-black text-navy leading-none">
+                                                    {new Date(ticket.rented_date).toLocaleDateString('vi-VN')}
+                                                </span>
+                                                <span className="text-[10px] font-black text-gray-text uppercase mt-2 tracking-[0.1em] opacity-40 italic">Initial Handover Record</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-10 py-10 text-right">
+                                            <button
+                                                onClick={() => setSelectedTicket({ id: ticket.id, no: ticket.ticket_no })}
+                                                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-brand-primary text-xs font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-800 hover:bg-brand-primary hover:text-white hover:shadow-pro hover:scale-105 active:scale-95 transition-all"
+                                            >
+                                                <RotateCcw className="w-5 h-5" />
+                                                Ghi nhận trả
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={4} className="px-10 py-24 text-center">
+                                        <div className="flex flex-col items-center">
+                                            <Search className="w-12 h-12 text-slate-100 mb-6" />
+                                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">
+                                                {searchTerm ? 'No matching tickets detected in active queue' : 'Active rental queue is currently empty'}
+                                            </p>
+                                        </div>
                                     </td>
                                 </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={4} className="px-6 py-12 text-center text-slate-400 italic">
-                                    {searchTerm ? 'Không tìm thấy phiếu nào khớp với từ khóa.' : 'Hiện không có phiếu mượn nào chưa trả.'}
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="px-10 py-6 bg-slate-50/50 border-t border-slate-50 flex items-center justify-between shrink-0">
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Queue Capacity: Nominal</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Active:</span>
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-100 text-[10px] font-black text-slate-900 shadow-sm">{filteredTickets.length}</span>
+                    </div>
+                </div>
             </div>
 
             {selectedTicket && (

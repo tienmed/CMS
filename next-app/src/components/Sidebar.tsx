@@ -37,12 +37,14 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
 
     const navContent = (
         <>
-            <div className="p-5 lg:p-6">
-                <h1 className="text-xl font-bold tracking-tight text-blue-400">CECICS CMS</h1>
-                <p className="text-[10px] text-slate-400 mt-1 uppercase font-semibold tracking-widest">Hệ thống Quản lý Thiết bị</p>
+            <div className="px-8 py-10">
+                <div className="flex items-center gap-4 mb-2 group">
+                    <div className="w-12 h-12 rounded-2xl bg-brand-primary flex items-center justify-center text-white font-black text-2xl shadow-pro group-hover:scale-110 transition-all duration-500">C</div>
+                    <h1 className="text-2xl font-black tracking-tight text-navy">CECICS <span className="font-medium text-gray-text opacity-40">CMS</span></h1>
+                </div>
             </div>
 
-            <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto custom-scrollbar">
+            <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
                 {menuItems.map((item) => {
                     const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
                     return (
@@ -51,24 +53,24 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
                             href={item.href}
                             onClick={() => setOpen(false)}
                             className={cn(
-                                "flex items-center gap-3 px-4 py-3 rounded-2xl transition-all group text-sm relative overflow-hidden cursor-pointer",
+                                "flex items-center gap-4 px-6 py-4 rounded-2xl transition-all group text-sm relative overflow-hidden",
                                 isActive
-                                    ? "bg-blue-600/20 text-blue-300 font-bold shadow-[inset_0_0_20px_rgba(59,130,246,0.1)] border border-blue-500/20"
-                                    : "text-slate-400 hover:bg-white/5 hover:text-white border border-transparent"
+                                    ? "bg-background dark:bg-white/5 text-navy font-black"
+                                    : "text-gray-text font-bold hover:text-navy hover:bg-background/50"
                             )}
                         >
+                            <item.icon className={cn("w-5 h-5 shrink-0 transition-all duration-300", isActive ? "text-brand-primary" : "text-gray-text group-hover:text-navy")} />
+                            <span className="tracking-wide">{item.name}</span>
                             {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-500 rounded-r-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-primary rounded-r-full" />
                             )}
-                            <item.icon className={cn("w-5 h-5 shrink-0 transition-all duration-300", isActive ? "text-blue-400 scale-110" : "text-slate-500 group-hover:text-blue-400 group-hover:scale-110")} />
-                            <span className="relative z-10">{item.name}</span>
                         </Link>
                     );
                 })}
 
                 {user?.username === 'super_admin' && (
-                    <div className="pt-4 mt-4 border-t border-slate-800/50">
-                        <p className="px-4 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Quản trị viên</p>
+                    <div className="pt-8 mt-8 border-t border-border-light">
+                        <p className="px-6 mb-4 text-[10px] font-black text-gray-text uppercase tracking-[0.3em]">Operational Node</p>
                         {adminMenuItems.map((item) => {
                             const isActive = pathname === item.href || pathname.startsWith(item.href);
                             return (
@@ -77,17 +79,17 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
                                     href={item.href}
                                     onClick={() => setOpen(false)}
                                     className={cn(
-                                        "flex items-center gap-3 px-4 py-3 rounded-2xl transition-all group text-sm relative overflow-hidden cursor-pointer",
+                                        "flex items-center gap-4 px-6 py-4 rounded-2xl transition-all group text-sm relative overflow-hidden",
                                         isActive
-                                            ? "bg-indigo-600/20 text-indigo-300 font-bold shadow-[inset_0_0_20px_rgba(79,70,229,0.1)] border border-indigo-500/20"
-                                            : "text-slate-400 hover:bg-white/5 hover:text-white border border-transparent"
+                                            ? "bg-background dark:bg-white/5 text-navy font-black"
+                                            : "text-gray-text font-bold hover:text-navy hover:bg-background/50"
                                     )}
                                 >
+                                    <item.icon className={cn("w-5 h-5 shrink-0 transition-all duration-300", isActive ? "text-brand-primary" : "text-gray-text group-hover:text-navy")} />
+                                    <span className="tracking-wide">{item.name}</span>
                                     {isActive && (
-                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-500 rounded-r-full shadow-[0_0_10px_rgba(79,70,229,0.5)]" />
+                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-primary rounded-r-full" />
                                     )}
-                                    <item.icon className={cn("w-5 h-5 shrink-0 transition-all duration-300", isActive ? "text-indigo-400 scale-110" : "text-slate-500 group-hover:text-indigo-400 group-hover:scale-110")} />
-                                    <span className="relative z-10">{item.name}</span>
                                 </Link>
                             );
                         })}
@@ -95,10 +97,10 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
                 )}
             </nav>
 
-            <div className="p-4 border-t border-slate-800/50 mt-auto bg-slate-900/50 backdrop-blur-sm">
-                <Link href="/logout" className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-slate-500 hover:bg-red-900/20 hover:text-red-400 transition-all text-sm font-bold group">
-                    <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span>Đăng xuất</span>
+            <div className="p-8">
+                <Link href="/logout" className="flex items-center gap-4 px-8 py-5 w-full rounded-[1.5rem] text-gray-text hover:bg-red-50 hover:text-red-500 transition-all text-[10px] font-black uppercase tracking-[0.2em] group border border-transparent hover:border-red-100">
+                    <LogOut className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <span>Deactivate Session</span>
                 </Link>
             </div>
         </>
@@ -109,7 +111,7 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
             {/* Mobile hamburger button */}
             <button
                 onClick={() => setOpen(true)}
-                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-900/30"
+                className="lg:hidden fixed top-6 right-6 z-50 p-3 rounded-2xl bg-white text-slate-900 shadow-soft border border-slate-100"
                 aria-label="Open menu"
             >
                 <Menu className="w-5 h-5" />
@@ -118,7 +120,7 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
             {/* Mobile overlay */}
             {open && (
                 <div
-                    className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+                    className="lg:hidden fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm"
                     onClick={() => setOpen(false)}
                 />
             )}
@@ -126,13 +128,13 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
             {/* Mobile drawer */}
             <aside
                 className={cn(
-                    "lg:hidden fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white flex flex-col transform transition-transform duration-300 ease-out",
+                    "lg:hidden fixed inset-y-0 left-0 z-50 w-72 bg-white text-slate-900 flex flex-col transform transition-transform duration-300 ease-out",
                     open ? "translate-x-0" : "-translate-x-full"
                 )}
             >
                 <button
                     onClick={() => setOpen(false)}
-                    className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+                    className="absolute top-6 right-6 p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100"
                 >
                     <X className="w-5 h-5" />
                 </button>
@@ -140,7 +142,7 @@ export function Sidebar({ user }: { user: AuthUser | null }) {
             </aside>
 
             {/* Desktop sidebar */}
-            <aside className="hidden lg:flex w-64 bg-slate-900/90 backdrop-blur-3xl text-white h-[calc(100vh-2rem)] fixed left-4 top-4 rounded-[2rem] flex-col border border-slate-800/50 shadow-2xl z-40">
+            <aside className="hidden lg:flex w-72 bg-white h-screen fixed left-0 top-0 flex-col border-r border-border-light z-40">
                 {navContent}
             </aside>
         </>

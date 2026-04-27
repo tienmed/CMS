@@ -54,47 +54,46 @@ export default async function DashboardPage() {
                 <StatCards stats={statCards} />
             </div>
 
-            {/* Main Distribution Grids */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0 overflow-hidden">
-                {/* Group Distribution */}
-                <div className="bg-white/70 backdrop-blur-xl p-4 rounded-[2rem] border border-white/50 shadow-sm flex flex-col min-h-0 overflow-hidden">
-                    <div className="flex items-center justify-between mb-2 shrink-0">
-                        <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
-                            <Layers className="w-4 h-4 text-blue-500" />
-                            Phân bố theo Nhóm
-                        </h3>
-                        <div className="flex flex-col items-end">
-                            <span className="text-[10px] font-black text-slate-400 bg-slate-100 px-3 py-1 rounded-full uppercase tracking-widest border border-slate-200">Phân loại Barcode</span>
+            {/* Main Distribution Grids - Bento Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+                {/* Group Distribution - Larger Card */}
+                <div className="lg:col-span-2 bento-card flex flex-col min-h-[400px]">
+                    <div className="flex items-center justify-between mb-12 shrink-0">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-brand-primary">
+                                <Layers className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h3 className="font-black text-navy text-2xl tracking-tighter uppercase font-sans">Phân bổ Nhóm</h3>
+                                <p className="text-[10px] font-bold text-gray-text uppercase tracking-widest mt-1 italic">Structural Category Map</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="flex-1 min-h-0 overflow-hidden flex flex-col justify-between py-2">
-                        {groupDist.slice(0, 5).map((g) => {
+                    <div className="flex-1 min-h-0 space-y-4 overflow-y-auto custom-scrollbar pr-2">
+                        {groupDist.map((g) => {
                             const total = groupDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((g.count / total) * 100).toFixed(1) : '0';
                             const colors: Record<string, string> = {
-                                'MH': 'bg-blue-500 shadow-blue-100',
-                                'TB': 'bg-emerald-500 shadow-emerald-100',
-                                'VP': 'bg-violet-500 shadow-violet-100',
+                                'MH': 'bg-brand-primary',
+                                'TB': 'bg-emerald-500',
+                                'VP': 'bg-amber-500',
                             };
                             return (
-                                <Link key={g.group_code} href={`/dashboard/analytics/group/${g.group_code}`} className="block hover:bg-white/50 px-4 py-2 rounded-2xl transition-all border border-transparent hover:border-slate-100 cursor-pointer group">
-                                    <div className="flex items-center justify-between mb-1.5">
-                                        <div className="flex items-center gap-2">
-                                            <div className={cn("w-2 h-2 rounded-full", colors[g.group_code] || 'bg-slate-400')} />
-                                            <div className="flex flex-col">
-                                                <span className="text-xs font-black text-slate-700 leading-none">{g.label}</span>
-                                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Mã: {g.group_code}</span>
-                                            </div>
+                                <Link key={g.group_code} href={`/dashboard/analytics/group/${g.group_code}`} className="block hover:bg-slate-50 p-4 rounded-2xl transition-all group border border-transparent">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className={cn("w-2 h-2 rounded-full", colors[g.group_code] || 'bg-slate-300')} />
+                                            <span className="text-sm font-bold text-gray-text">{g.label}</span>
                                         </div>
-                                        <div className="flex flex-col items-end">
-                                            <span className="text-sm font-black text-slate-900 leading-none">{g.count.toLocaleString()}</span>
-                                            <span className="text-[9px] font-bold text-blue-500">{pct}%</span>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-sm font-black text-navy">{g.count}</span>
+                                            <span className="text-[10px] font-bold text-gray-text">{pct}%</span>
                                         </div>
                                     </div>
-                                    <div className="w-full bg-slate-100/50 rounded-full h-1 overflow-hidden border border-slate-50">
+                                    <div className="w-full bg-slate-50 rounded-full h-1.5 overflow-hidden">
                                         <div
-                                            className={cn("h-full rounded-full transition-all duration-1000", colors[g.group_code] || 'bg-slate-400')}
+                                            className={cn("h-full rounded-full transition-all duration-1000", colors[g.group_code] || 'bg-slate-300')}
                                             style={{ width: `${pct}%` }}
                                         />
                                     </div>
@@ -104,43 +103,43 @@ export default async function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Level Distribution */}
-                <div className="bg-white/70 backdrop-blur-xl p-4 rounded-[2rem] border border-white/50 shadow-sm flex flex-col min-h-0 overflow-hidden">
-                    <div className="flex items-center justify-between mb-2 shrink-0">
-                        <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
-                            <PieChartIcon className="w-4 h-4 text-purple-500" />
-                            Mức độ quan trọng
-                        </h3>
-                        <span className="text-[9px] font-black text-slate-400 bg-slate-100 px-2 py-1 rounded-full uppercase tracking-widest border border-slate-200">Chỉ số H/M/L</span>
+                {/* Level Distribution - Vertical Bento Card */}
+                <div className="bento-card flex flex-col min-h-[400px]">
+                    <div className="flex items-center gap-4 mb-12 shrink-0">
+                        <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center text-teal-600">
+                            <PieChartIcon className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h3 className="font-black text-navy text-2xl tracking-tighter uppercase">Mức độ</h3>
+                            <p className="text-[10px] font-bold text-gray-text uppercase tracking-widest mt-1 italic">Priority Indices</p>
+                        </div>
                     </div>
 
-                    <div className="flex-1 min-h-0 flex flex-col justify-between py-2">
+                    <div className="flex-1 min-h-0 space-y-8 flex flex-col justify-center">
                         {levelDist.map((l) => {
                             const total = levelDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((l.count / total) * 100).toFixed(1) : '0';
-                            const styles: Record<string, { bg: string; text: string; ring: string; iconBg: string; bar: string }> = {
-                                'H': { bg: 'bg-red-50/20', text: 'text-red-600', ring: 'border-red-100/30', iconBg: 'bg-red-600', bar: 'bg-red-500 shadow-red-100' },
-                                'M': { bg: 'bg-amber-50/20', text: 'text-amber-600', ring: 'border-amber-100/30', iconBg: 'bg-amber-500', bar: 'bg-amber-500 shadow-amber-100' },
-                                'L': { bg: 'bg-emerald-50/20', text: 'text-emerald-600', ring: 'border-emerald-100/30', iconBg: 'bg-emerald-500', bar: 'bg-emerald-500 shadow-emerald-100' },
+                            const styles: Record<string, { color: string; bg: string; dot: string }> = {
+                                'H': { color: 'text-red-600', bg: 'bg-red-500', dot: 'bg-red-500' },
+                                'M': { color: 'text-amber-600', bg: 'bg-amber-500', dot: 'bg-amber-500' },
+                                'L': { color: 'text-emerald-600', bg: 'bg-emerald-500', dot: 'bg-emerald-500' },
                             };
-                            const s = styles[l.level_code] || { bg: 'bg-slate-50', text: 'text-slate-600', ring: 'border-slate-100', iconBg: 'bg-slate-500', bar: 'bg-slate-500' };
+                            const s = styles[l.level_code] || { color: 'text-slate-400', bg: 'bg-slate-400', dot: 'bg-slate-400' };
                             return (
-                                <Link key={l.level_code} href={`/dashboard/analytics/level/${l.level_code}`} className={cn("p-4 rounded-[2rem] border transition-all hover:bg-white cursor-pointer group hover:shadow-lg hover:shadow-slate-200/30", s.bg, s.ring)}>
-                                    <div className="flex items-center justify-between mb-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs text-white shadow-md", s.iconBg)}>{l.level_code}</div>
-                                            <div>
-                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{l.label}</p>
-                                                <p className={cn("text-xl font-black leading-none", s.text)}>{l.count.toLocaleString()}</p>
+                                <Link key={l.level_code} href={`/dashboard/analytics/level/${l.level_code}`} className="block group">
+                                    <div className="flex items-end justify-between mb-3">
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className={cn("w-1.5 h-1.5 rounded-full", s.dot)} />
+                                                <span className="text-[11px] font-black text-gray-text uppercase tracking-[0.2em]">{l.label}</span>
                                             </div>
+                                            <span className={cn("text-5xl font-black tracking-tighter text-number leading-none", s.color)}>{l.count.toLocaleString()}</span>
                                         </div>
-                                        <div className="text-right">
-                                            <span className={cn("text-[10px] font-black px-2 py-0.5 rounded-full border border-current opacity-60", s.text)}>{pct}%</span>
-                                        </div>
+                                        <span className="text-sm font-black text-gray-text/40">{pct}%</span>
                                     </div>
-                                    <div className="w-full bg-slate-100/50 rounded-full h-1 overflow-hidden border border-slate-50">
+                                    <div className="w-full bg-background dark:bg-white/5 rounded-full h-2 overflow-hidden shadow-inner">
                                         <div
-                                            className={cn("h-full rounded-full transition-all duration-1000", s.bar)}
+                                            className={cn("h-full rounded-full transition-all duration-1000", s.bg)}
                                             style={{ width: `${pct}%` }}
                                         />
                                     </div>

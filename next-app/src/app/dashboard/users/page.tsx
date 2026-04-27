@@ -157,123 +157,121 @@ export default function UserManagementPage() {
     );
 
     return (
-        <div className="flex flex-col gap-6 h-full max-h-[calc(100vh-140px)] overflow-hidden font-sans">
-            {/* Header section */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-600/10 flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100">
-                        <Users className="w-6 h-6" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-800 tracking-tight">Quản lý Tài khoản</h1>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Hệ thống Quản trị CECICS</p>
-                    </div>
+        <div className="flex flex-col gap-10 h-full max-h-[calc(100vh-140px)] overflow-hidden font-sans animate-in fade-in duration-700">
+            {/* Header section - Pro Max Style */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10 shrink-0 border-b border-border-light dark:border-white/5 pb-10">
+                <div>
+                    <h1 className="headline-hero text-navy uppercase leading-none">Tài khoản</h1>
+                    <p className="text-[11px] font-black text-gray-text mt-4 uppercase tracking-[0.3em] opacity-60">Access Control • System Governance</p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                <div className="flex items-end gap-5">
+                    <div className="relative group w-full sm:w-80">
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-text group-focus-within:text-brand-primary transition-colors duration-300" />
                         <input
                             type="text"
-                            placeholder="Tìm kiếm tài khoản..."
-                            className="bg-white/70 backdrop-blur-md border border-white/40 rounded-2xl pl-11 pr-6 py-3 text-sm font-medium text-slate-700 w-full sm:w-64 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
+                            placeholder="Tìm kiếm danh tính..."
+                            className="bg-white dark:bg-white/5 border border-transparent rounded-2xl pl-16 pr-8 h-16 text-sm font-bold text-navy w-full focus:outline-none focus:ring-8 focus:ring-brand-primary/5 focus:border-brand-primary/20 transition-all shadow-sm placeholder:text-gray-text/30"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                     <button
                         onClick={() => setShowCreateModal(true)}
-                        className="bg-indigo-600 text-white px-6 py-3 rounded-2xl text-sm font-black flex items-center gap-2 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95 shrink-0"
+                        className="bg-brand-primary text-white h-16 px-10 rounded-2xl text-sm font-black flex items-center gap-3 hover:scale-105 transition-all shadow-pro active:scale-95 shrink-0 uppercase tracking-widest group"
                     >
-                        <UserPlus className="w-4 h-4" />
-                        <span className="hidden sm:inline">Thêm tài khoản</span>
+                        <UserPlus className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                        <span className="hidden sm:inline">Add Personnel</span>
                     </button>
                 </div>
             </div>
 
             {notification && (
                 <div className={cn(
-                    "fixed bottom-8 right-8 z-50 flex items-center gap-3 px-6 py-4 rounded-2xl border shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-300",
-                    notification.type === 'success' ? "bg-emerald-600 text-white border-emerald-500" : "bg-red-600 text-white border-red-500"
+                    "fixed bottom-8 right-8 z-50 flex items-center gap-4 px-8 py-5 rounded-3xl border shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-500",
+                    notification.type === 'success' ? "bg-emerald-600 text-white border-emerald-500 shadow-emerald-100" : "bg-red-600 text-white border-red-500 shadow-red-100"
                 )}>
-                    {notification.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                    <span className="font-bold text-sm">{notification.message}</span>
+                    {notification.type === 'success' ? <CheckCircle2 className="w-6 h-6" /> : <AlertCircle className="w-6 h-6" />}
+                    <span className="font-black text-sm uppercase tracking-widest">{notification.message}</span>
                 </div>
             )}
 
-            {/* Users Table */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-[2.5rem] border border-white/50 shadow-sm flex flex-col min-h-0 overflow-hidden">
+            {/* Users Table - Bento Style */}
+            <div className="bento-card !p-0 flex flex-col min-h-0 overflow-hidden">
                 <div className="flex-1 overflow-x-auto custom-scrollbar">
                     <table className="w-full text-left border-collapse">
-                        <thead className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100/50 text-[10px] uppercase font-black text-slate-400 tracking-widest">
+                        <thead className="sticky top-0 z-10 bg-background/50 dark:bg-black/50 backdrop-blur-md text-[11px] uppercase font-black text-gray-text tracking-[0.3em]">
                             <tr>
-                                <th className="px-8 py-5">Tài khoản</th>
-                                <th className="px-6 py-5">Họ và tên</th>
-                                <th className="px-6 py-5">Phòng ban</th>
-                                <th className="px-6 py-5">Ngày tạo</th>
-                                <th className="px-8 py-5 text-right">Thao tác</th>
+                                <th className="px-10 py-8 border-b border-border-light dark:border-white/5">Identity Matrix</th>
+                                <th className="px-10 py-8 border-b border-border-light">Full Legal Name</th>
+                                <th className="px-10 py-8 border-b border-border-light">Org Unit</th>
+                                <th className="px-10 py-8 border-b border-border-light">Registration Date</th>
+                                <th className="px-10 py-8 text-right border-b border-border-light">Governance</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100/50">
+                        <tbody className="divide-y divide-border-light dark:divide-white/5">
                             {loading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td colSpan={5} className="px-8 py-6 h-20 bg-slate-50/50 first:rounded-t-lg last:rounded-b-lg mb-2" />
+                                        <td colSpan={5} className="px-10 py-12 bg-slate-50/20" />
                                     </tr>
                                 ))
                             ) : filteredUsers.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-8 py-20 text-center text-slate-400 font-bold">
-                                        Không tìm thấy tài khoản nào
+                                    <td colSpan={5} className="px-10 py-32 text-center">
+                                        <div className="flex flex-col items-center">
+                                            <Search className="w-16 h-16 text-slate-100 mb-8" />
+                                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">Zero Identities Detected</p>
+                                        </div>
                                     </td>
                                 </tr>
                             ) : filteredUsers.map((user) => (
-                                <tr key={user.id} className="group hover:bg-white/50 transition-colors">
-                                    <td className="px-8 py-5">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                <tr key={user.id} className="group hover:bg-slate-50/30 dark:hover:bg-white/5 transition-all duration-300">
+                                    <td className="px-10 py-10">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-16 h-16 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-brand-primary font-black text-lg border border-indigo-100 dark:border-indigo-800/30 group-hover:bg-brand-primary group-hover:text-white group-hover:scale-110 transition-all duration-500 shadow-sm">
                                                 {user.username.slice(0, 2).toUpperCase()}
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-black text-slate-800">{user.username}</span>
-                                                <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                                                    <Mail className="w-2 h-2" /> {user.email || 'N/A'}
+                                                <span className="text-lg font-black text-navy tracking-tight group-hover:text-brand-primary transition-colors">{user.username}</span>
+                                                <span className="text-[11px] font-black text-gray-text opacity-40 flex items-center gap-2 mt-2 uppercase tracking-tighter">
+                                                    <Mail className="w-3 h-3" /> {user.email || 'no-email@cecics.vn'}
                                                 </span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-5 text-sm font-bold text-slate-600">
+                                    <td className="px-10 py-10 text-base font-black text-navy opacity-80">
                                         {user.name}
                                     </td>
-                                    <td className="px-6 py-5">
-                                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider">
-                                            <Building2 className="w-3 h-3" />
-                                            {user.department_id ? `Phòng ${user.department_id}` : 'N/A'}
+                                    <td className="px-10 py-10">
+                                        <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-800 shadow-sm">
+                                            <ShieldCheck className="w-4 h-4" />
+                                            {user.department_id ? `DEP-${user.department_id}` : 'ROOT / UNASSIGNED'}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-5 text-xs text-slate-400 font-bold">
+                                    <td className="px-10 py-10 text-xs text-gray-text font-black uppercase tracking-widest opacity-60">
                                         {new Date(user.created_at).toLocaleDateString('vi-VN')}
                                     </td>
-                                    <td className="px-8 py-5 text-right space-x-2">
+                                    <td className="px-10 py-10 text-right space-x-3">
                                         <button
                                             onClick={() => setShowResetModal(user)}
-                                            className="p-2.5 rounded-xl text-slate-400 hover:bg-amber-100 hover:text-amber-600 transition-all relative group"
+                                            className="h-12 w-12 rounded-2xl text-slate-300 hover:bg-amber-50 hover:text-amber-500 hover:border-amber-100 transition-all shadow-sm bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 inline-flex items-center justify-center"
                                             title="Khôi phục mật khẩu"
                                         >
-                                            <Key className="w-4 h-4" />
+                                            <Key className="w-5 h-5" />
                                         </button>
                                         <button
                                             onClick={() => setShowDeleteModal(user)}
                                             disabled={user.username === 'super_admin'}
                                             className={cn(
-                                                "p-2.5 rounded-xl transition-all",
+                                                "h-12 w-12 rounded-2xl transition-all shadow-sm bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 inline-flex items-center justify-center",
                                                 user.username === 'super_admin'
-                                                    ? "text-slate-200 cursor-not-allowed"
-                                                    : "text-slate-400 hover:bg-red-100 hover:text-red-600"
+                                                    ? "opacity-20 cursor-not-allowed"
+                                                    : "text-slate-300 hover:bg-red-50 hover:text-red-500 hover:border-red-100"
                                             )}
-                                            title={user.username === 'super_admin' ? "Không thể xóa tài khoản root" : "Xóa tài khoản"}
+                                            title={user.username === 'super_admin' ? "Hệ thống bảo vệ" : "Xóa tài khoản"}
                                         >
-                                            <Trash2 className="w-4 h-4" />
+                                            <Trash2 className="w-5 h-5" />
                                         </button>
                                     </td>
                                 </tr>
@@ -285,68 +283,83 @@ export default function UserManagementPage() {
 
             {/* Create Modal */}
             {showCreateModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowCreateModal(false)} />
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-md p-8 relative shadow-2xl animate-in zoom-in duration-300">
-                        <button onClick={() => setShowCreateModal(false)} className="absolute top-6 right-6 p-2 rounded-xl text-slate-400 hover:bg-slate-100 transition-all">
-                            <X className="w-5 h-5" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-4">
+                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setShowCreateModal(false)} />
+                    <div className="bg-white rounded-[3rem] w-full max-w-lg p-10 relative shadow-[0_20px_70px_rgba(0,0,0,0.1)] animate-in zoom-in duration-500 border border-slate-50">
+                        <button onClick={() => setShowCreateModal(false)} className="absolute top-8 right-8 p-3 rounded-2xl text-slate-300 hover:bg-slate-50 transition-all">
+                            <X className="w-6 h-6" />
                         </button>
 
-                        <div className="mb-8">
-                            <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-100 mb-4">
-                                <UserPlus className="w-7 h-7" />
+                        <div className="mb-10">
+                            <div className="w-16 h-16 rounded-[1.5rem] bg-brand-primary text-white flex items-center justify-center shadow-2xl shadow-blue-100 mb-6">
+                                <UserPlus className="w-8 h-8" />
                             </div>
-                            <h2 className="text-2xl font-black text-slate-800 tracking-tight">Thêm tài khoản mới</h2>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Cấp quyền truy cập hệ thống</p>
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Thêm tài khoản</h2>
+                            <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest leading-relaxed">Cấp quyền truy cập cho nhân viên mới</p>
                         </div>
 
-                        <form onSubmit={handleCreateUser} className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Tên tài khoản</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm font-bold"
-                                    placeholder="Ví dụ: admin_tech"
-                                    value={formData.username}
-                                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Họ và tên</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm font-bold"
-                                    placeholder="Nguyễn Văn A"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
+                        <form onSubmit={handleCreateUser} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Mật khẩu</label>
+                                    <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] pl-1">Username</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-transparent focus:bg-white focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all text-sm font-bold"
+                                        placeholder="Tên đăng nhập"
+                                        value={formData.username}
+                                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] pl-1">Họ và tên</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-transparent focus:bg-white focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all text-sm font-bold"
+                                        placeholder="Nguyễn Văn A"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] pl-1">Email liên hệ</label>
+                                <input
+                                    required
+                                    type="email"
+                                    className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-transparent focus:bg-white focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all text-sm font-bold"
+                                    placeholder="email@cecics.vn"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] pl-1">Mật khẩu</label>
                                     <input
                                         required
                                         type="password"
-                                        className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm font-bold"
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-transparent focus:bg-white focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all text-sm font-bold"
+                                        placeholder="••••••••"
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Xác nhận</label>
+                                    <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] pl-1">Xác nhận</label>
                                     <input
                                         required
                                         type="password"
-                                        className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm font-bold"
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-transparent focus:bg-white focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all text-sm font-bold"
+                                        placeholder="••••••••"
                                         value={formData.confirmPassword}
                                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                                     />
                                 </div>
                             </div>
-                            <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 mt-4">
-                                Tạo tài khoản
+                            <button type="submit" className="w-full bg-brand-primary text-white py-5 rounded-[1.5rem] font-black text-sm shadow-2xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-[0.98] mt-6 uppercase tracking-widest">
+                                Tạo tài khoản hệ thống
                             </button>
                         </form>
                     </div>
@@ -355,44 +368,46 @@ export default function UserManagementPage() {
 
             {/* Reset Modal */}
             {showResetModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowResetModal(null)} />
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-sm p-8 relative shadow-2xl animate-in zoom-in duration-300">
-                        <button onClick={() => setShowResetModal(null)} className="absolute top-6 right-6 p-2 rounded-xl text-slate-400 hover:bg-slate-100 transition-all">
-                            <X className="w-5 h-5" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-4">
+                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setShowResetModal(null)} />
+                    <div className="bg-white rounded-[3rem] w-full max-w-md p-10 relative shadow-2xl animate-in zoom-in duration-500 border border-slate-50">
+                        <button onClick={() => setShowResetModal(null)} className="absolute top-8 right-8 p-3 rounded-2xl text-slate-300 hover:bg-slate-50 transition-all">
+                            <X className="w-6 h-6" />
                         </button>
 
-                        <div className="mb-8">
-                            <div className="w-14 h-14 rounded-2xl bg-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-100 mb-4">
-                                <RefreshCw className="w-7 h-7" />
+                        <div className="mb-10">
+                            <div className="w-16 h-16 rounded-[1.5rem] bg-amber-500 text-white flex items-center justify-center shadow-2xl shadow-amber-100 mb-6">
+                                <RefreshCw className="w-8 h-8" />
                             </div>
-                            <h2 className="text-2xl font-black text-slate-800 tracking-tight">Khôi phục mật khẩu</h2>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Cho tài khoản: {showResetModal.username}</p>
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Cấp lại mật khẩu</h2>
+                            <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">Tài khoản: {showResetModal.username}</p>
                         </div>
 
-                        <form onSubmit={handleResetPassword} className="space-y-4">
+                        <form onSubmit={handleResetPassword} className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Mật khẩu mới</label>
+                                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] pl-1">Mật khẩu mới</label>
                                 <input
                                     required
                                     type="password"
-                                    className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-4 focus:ring-amber-500/10 transition-all text-sm font-bold"
+                                    className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-transparent focus:bg-white focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all text-sm font-bold"
+                                    placeholder="••••••••"
                                     value={resetData.password}
                                     onChange={(e) => setResetData({ ...resetData, password: e.target.value })}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Xác nhận</label>
+                                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] pl-1">Xác nhận mật khẩu</label>
                                 <input
                                     required
                                     type="password"
-                                    className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-4 focus:ring-amber-500/10 transition-all text-sm font-bold"
+                                    className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-transparent focus:bg-white focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all text-sm font-bold"
+                                    placeholder="••••••••"
                                     value={resetData.confirmPassword}
                                     onChange={(e) => setResetData({ ...resetData, confirmPassword: e.target.value })}
                                 />
                             </div>
-                            <button type="submit" className="w-full bg-amber-500 text-white py-4 rounded-2xl font-black text-sm shadow-lg shadow-amber-100 hover:bg-amber-600 transition-all active:scale-95 mt-4">
-                                Cập nhật mật khẩu
+                            <button type="submit" className="w-full bg-amber-500 text-white py-5 rounded-[1.5rem] font-black text-sm shadow-2xl shadow-amber-100 hover:bg-amber-600 transition-all active:scale-[0.98] mt-6 uppercase tracking-widest text-shadow">
+                                Cập nhật ngay
                             </button>
                         </form>
                     </div>
@@ -401,31 +416,29 @@ export default function UserManagementPage() {
 
             {/* Delete Confirmation Modal */}
             {showDeleteModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(null)} />
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-sm p-8 relative shadow-2xl animate-in zoom-in duration-300 border border-red-100">
-                        <div className="mb-8 text-center">
-                            <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center text-red-600 mx-auto mb-6 border-4 border-red-100/50">
-                                <Trash2 className="w-10 h-10" />
-                            </div>
-                            <h2 className="text-2xl font-black text-slate-800 tracking-tight">Xác nhận xóa?</h2>
-                            <p className="text-sm font-medium text-slate-400 mt-2">
-                                Bạn có chắc chắn muốn xóa tài khoản <span className="text-slate-900 font-black">{showDeleteModal.username}</span>? Hành động này không thể hoàn tác.
-                            </p>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-4">
+                    <div className="absolute inset-0 bg-red-950/20 backdrop-blur-md" onClick={() => setShowDeleteModal(null)} />
+                    <div className="bg-white rounded-[3rem] w-full max-w-md p-12 relative shadow-2xl animate-in zoom-in duration-500 border border-red-50 text-center">
+                        <div className="w-24 h-24 rounded-full bg-red-50 flex items-center justify-center text-red-500 mx-auto mb-8 border-8 border-white shadow-xl shadow-red-100/50">
+                            <Trash2 className="w-10 h-10" />
                         </div>
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tight">Xóa tài khoản?</h2>
+                        <p className="text-sm font-bold text-slate-400 mt-4 leading-relaxed px-4">
+                            Hành động này sẽ xóa vĩnh viễn quyền truy cập của <span className="text-red-600 font-black">{showDeleteModal.username}</span>. Bạn chắc chắn chứ?
+                        </p>
 
-                        <div className="flex gap-3">
+                        <div className="flex flex-col sm:flex-row gap-4 mt-10">
                             <button
                                 onClick={() => setShowDeleteModal(null)}
-                                className="flex-1 px-6 py-4 rounded-2xl font-black text-sm text-slate-500 hover:bg-slate-100 transition-all"
+                                className="flex-1 px-8 py-5 rounded-2xl font-black text-sm text-slate-400 hover:bg-slate-50 transition-all uppercase tracking-widest order-2 sm:order-1"
                             >
                                 Hủy bỏ
                             </button>
                             <button
                                 onClick={handleDeleteUser}
-                                className="flex-1 bg-red-600 text-white px-6 py-4 rounded-2xl font-black text-sm shadow-lg shadow-red-100 hover:bg-red-700 transition-all active:scale-95"
+                                className="flex-1 bg-red-600 text-white px-8 py-5 rounded-2xl font-black text-sm shadow-2xl shadow-red-200 hover:bg-red-700 transition-all active:scale-95 uppercase tracking-widest order-1 sm:order-2"
                             >
-                                Xóa ngay
+                                Xóa vĩnh viễn
                             </button>
                         </div>
                     </div>

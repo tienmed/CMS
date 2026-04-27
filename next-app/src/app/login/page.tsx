@@ -23,28 +23,32 @@ export default async function LoginPage({
     }
 
     return (
-        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
-            <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200 shadow-xl p-8">
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 rounded-2xl bg-blue-600 text-white">
-                        <ShieldCheck className="w-6 h-6" />
+        <div className="min-h-screen bg-background flex flex-col md:flex-row items-center justify-center p-6 relative overflow-hidden">
+            {/* Background design elements */}
+            <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-primary/5 -skew-x-12 transform translate-x-1/2" />
+
+            <div className="w-full max-w-md bg-white rounded-[2.5rem] p-10 shadow-soft relative z-10 border border-slate-50">
+                <div className="mb-10 text-center md:text-left">
+                    <div className="inline-flex items-center gap-3 mb-6">
+                        <div className="p-3 rounded-2xl bg-brand-primary text-white shadow-lg shadow-blue-200">
+                            <ShieldCheck className="w-7 h-7" />
+                        </div>
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase italic">CECICS <span className="text-brand-primary">CMS</span></h1>
                     </div>
-                    <div>
-                        <h1 className="text-xl font-black text-slate-900">Đăng nhập CECICS CMS</h1>
-                        <p className="text-xs text-slate-500 mt-1">Sử dụng username và password</p>
-                    </div>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-2">Chào mừng trở lại</h2>
+                    <p className="text-sm font-bold text-slate-400">Đăng nhập để quản lý thiết bị y tế</p>
                 </div>
 
                 {errorMessage && (
-                    <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                    <div className="mb-6 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-600 animate-in slide-in-from-top-2 duration-300">
                         {errorMessage}
                     </div>
                 )}
 
-                <form action={loginAction} className="space-y-4">
-                    <div>
-                        <label htmlFor="username" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-                            Username
+                <form action={loginAction} className="space-y-6">
+                    <div className="space-y-2">
+                        <label htmlFor="username" className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
+                            Tài khoản
                         </label>
                         <input
                             id="username"
@@ -52,11 +56,11 @@ export default async function LoginPage({
                             type="text"
                             required
                             placeholder="Nhập username"
-                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary focus:bg-white transition-all text-sm font-bold placeholder:text-slate-300"
                         />
                     </div>
-                    <div>
-                        <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                    <div className="space-y-2">
+                        <label htmlFor="password" className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
                             Mật khẩu
                         </label>
                         <input
@@ -64,16 +68,28 @@ export default async function LoginPage({
                             name="password"
                             type="password"
                             required
-                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            placeholder="••••••••"
+                            className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary focus:bg-white transition-all text-sm font-bold placeholder:text-slate-300"
                         />
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm font-bold transition-colors"
+                        className="w-full bg-brand-primary hover:bg-blue-700 text-white py-4 rounded-2xl text-sm font-black shadow-xl shadow-blue-100 transition-all active:scale-[0.98] mt-4 uppercase tracking-widest"
                     >
-                        Đăng nhập
+                        Đăng nhập ngay
                     </button>
+
+                    <p className="text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest pt-4">
+                        Thiết kế bởi Horizon UI Architecture
+                    </p>
                 </form>
+            </div>
+
+            {/* Footer info */}
+            <div className="absolute bottom-10 text-center w-full md:w-auto">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">
+                    &copy; 2024 CECICS MEDICAL CENTER
+                </p>
             </div>
         </div>
     );

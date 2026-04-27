@@ -1,25 +1,78 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F5F5F7;
+  --foreground: #1D1D1F;
+  --brand-primary: #6366F1;
+  --brand-secondary: #000000;
+  --text-main: #1D1D1F;
+  --text-muted: #86868B;
+  --border-soft: #E5E7EB;
+  --white: #ffffff;
+
+  --radius-pro: 24px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-roboto), var(--font-geist-sans), ui-sans-serif, system-ui;
-  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, SFMono-Regular;
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-navy: var(--text-main);
+  --color-gray-text: var(--text-muted);
+  --color-border-light: var(--border-soft);
+
+  --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular;
+
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-pro: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #F5F5F7;
+    --text-main: #F5F5F7;
+    --text-muted: #86868B;
+    --border-soft: #1D1D1F;
+    --white: #111111;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+
+.headline-hero {
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.text-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 10px;
+}
+
+.bento-card {
+  @apply bg-white dark:bg-[#111111] rounded-[2rem] border border-border-light dark:border-border-light p-8 shadow-soft hover:shadow-pro transition-all duration-500;
 }

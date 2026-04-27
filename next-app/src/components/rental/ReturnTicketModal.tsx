@@ -124,49 +124,51 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
     };
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-0 md:p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white md:rounded-[2.5rem] shadow-2xl w-full h-full md:h-auto md:max-w-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 md:slide-in-from-bottom-10 duration-500 flex flex-col md:max-h-[90vh]">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-0 md:p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-500">
+            <div className="bg-white md:rounded-[3rem] shadow-2xl w-full h-full md:h-auto md:max-w-3xl overflow-hidden border border-white/20 animate-in zoom-in-95 md:slide-in-from-bottom-12 duration-700 flex flex-col md:max-h-[90vh]">
 
-                {/* Header */}
-                <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                    <div className="flex items-center gap-5">
-                        <div className="p-4 bg-emerald-500 rounded-[1.2rem] shadow-xl shadow-emerald-100 -rotate-3">
-                            <RotateCcw className="w-7 h-7 text-white" />
+                {/* Header - Premium Navigation Feel */}
+                <div className="px-10 py-8 border-b border-slate-50 bg-slate-50/20 backdrop-blur-sm flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 bg-emerald-500 rounded-[1.5rem] shadow-[0_20px_40px_rgba(16,185,129,0.2)] flex items-center justify-center -rotate-3 hover:rotate-0 transition-all duration-500">
+                            <RotateCcw className="w-8 h-8 text-white stroke-[3px]" />
                         </div>
                         <div>
-                            <h4 className="text-2xl font-black text-slate-900 tracking-tight">Ghi nhận trả thiết bị</h4>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mt-0.5">Số phiếu mượn: {ticketNo}</p>
+                            <h4 className="text-3xl font-black text-slate-900 tracking-tight">Post-Operational Return</h4>
+                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mt-1">Ticket Reconciliation: {ticketNo}</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-3 hover:bg-slate-200 rounded-full transition-all text-slate-400 hover:text-slate-600 active:scale-90"
+                        className="w-12 h-12 flex items-center justify-center hover:bg-slate-100 rounded-full transition-all text-slate-300 hover:text-slate-900 active:scale-90"
                     >
-                        <X className="w-8 h-8" />
+                        <X className="w-6 h-6" />
                     </button>
                 </div>
 
-                {/* Scanner Input Area */}
+                {/* Scanner Interface Area */}
                 {!loading && ticket && (
-                    <div className="px-8 pt-6 pb-2">
-                        <div className="flex gap-2">
-                            <form onSubmit={handleScan} className="relative group flex-1">
-                                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                                    <QrCode className={cn("w-6 h-6 transition-colors", scanWarning ? "text-red-500" : "text-emerald-500")} />
+                    <div className="px-10 pt-10 pb-4 shrink-0">
+                        <div className="flex gap-4">
+                            <form onSubmit={handleScan} className="relative group/search flex-1">
+                                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none z-10">
+                                    <QrCode className={cn("w-6 h-6 transition-all duration-500", scanWarning ? "text-red-500 scale-125" : "text-emerald-500")} />
                                 </div>
                                 <input
                                     ref={scanInputRef}
                                     type="text"
                                     value={scanValue}
                                     onChange={(e) => setScanValue(e.target.value)}
-                                    placeholder="Quét mã trả rảnh tay..."
+                                    placeholder="Execute Passive Optical Handover (Scan)..."
                                     className={cn(
-                                        "w-full bg-slate-100 border-2 border-transparent focus:bg-white focus:border-emerald-500 rounded-2xl py-5 pl-14 pr-6 text-base font-bold transition-all shadow-inner placeholder:text-slate-400 placeholder:font-medium outline-none",
-                                        scanWarning && "border-red-400 bg-red-50 focus:border-red-500"
+                                        "w-full bg-white border border-slate-100 focus:ring-4 rounded-[1.2rem] py-5 pl-15 pr-6 text-base font-black transition-all shadow-sm outline-none",
+                                        scanWarning
+                                            ? "border-red-200 ring-red-500/5 text-red-600 focus:border-red-300"
+                                            : "focus:ring-emerald-500/5 focus:border-emerald-500/20"
                                     )}
                                 />
                                 {scanWarning && (
-                                    <div className="absolute -bottom-4 right-4 bg-red-500 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider animate-bounce shadow-lg ring-4 ring-white">
+                                    <div className="absolute -bottom-3 right-6 bg-red-600 text-white px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] animate-in slide-in-from-top-2 duration-300 shadow-xl ring-4 ring-white">
                                         {scanWarning}
                                     </div>
                                 )}
@@ -174,42 +176,54 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
                             <button
                                 type="button"
                                 onClick={() => setIsScanning(true)}
-                                className="p-5 bg-emerald-600 text-white rounded-2xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all flex items-center justify-center"
+                                className="w-16 h-16 bg-white border border-slate-100 rounded-[1.2rem] text-slate-300 hover:text-emerald-600 hover:border-emerald-500/20 shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition-all flex items-center justify-center group/cam"
                                 title="Bật Camera Quét"
                             >
-                                <Camera className="w-5 h-5" />
+                                <Camera className="w-6 h-6 group-hover/cam:scale-110 transition-transform" />
                             </button>
                         </div>
                     </div>
                 )}
 
-                <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-10">
                     {loading ? (
-                        <div className="py-20 flex flex-col items-center justify-center gap-4 text-slate-400">
-                            <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
-                            <p className="font-bold animate-pulse uppercase tracking-[0.2em] text-xs">Đang tải danh sách thiết bị...</p>
+                        <div className="py-24 flex flex-col items-center justify-center gap-6">
+                            <div className="relative">
+                                <Loader2 className="w-16 h-16 animate-spin text-brand-primary" />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-2 h-2 rounded-full bg-brand-primary animate-ping"></div>
+                                </div>
+                            </div>
+                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] animate-pulse">Syncing Inventory Ledger...</p>
                         </div>
                     ) : ticket ? (
-                        <div className="space-y-6">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Người trả</span>
-                                    <p className="text-sm font-bold text-slate-900">{ticket.renter}</p>
+                        <div className="space-y-10">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-slate-50/50 p-6 rounded-[1.5rem] border border-slate-50 flex flex-col">
+                                    <span className="text-[8px] font-black text-slate-300 uppercase tracking-[0.3em] mb-2 leading-none">Personnel Node</span>
+                                    <p className="text-base font-black text-slate-900 tracking-tight">{ticket?.renter}</p>
                                 </div>
-                                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Bộ môn</span>
-                                    <p className="text-sm font-bold text-slate-900">{ticket.department_name}</p>
+                                <div className="bg-slate-50/50 p-6 rounded-[1.5rem] border border-slate-50 flex flex-col">
+                                    <span className="text-[8px] font-black text-slate-300 uppercase tracking-[0.3em] mb-2 leading-none">Origin Sector</span>
+                                    <p className="text-base font-black text-slate-900 tracking-tight">{ticket?.department_name}</p>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
-                                    <Package className="w-4 h-4 text-emerald-500" />
-                                    Thiết bị chờ trả ({ticket.items.filter(i => !i.returned_at).length})
-                                </h5>
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between px-1">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                            <Package className="w-4 h-4" />
+                                        </div>
+                                        <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Queue for Reconciliation</h5>
+                                    </div>
+                                    <div className="px-3 py-1 bg-emerald-500 rounded-lg text-white font-black text-[10px] uppercase tracking-tighter">
+                                        {ticket?.items.filter(i => !i.returned_at).length} PENDING
+                                    </div>
+                                </div>
 
-                                <div className="space-y-3">
-                                    {ticket.items.map(item => {
+                                <div className="grid grid-cols-1 gap-4">
+                                    {ticket?.items.map(item => {
                                         const isReturned = !!item.returned_at;
                                         const isSelected = selectedDetailIds.includes(item.detail_id!);
                                         const isLate = item.due_date ? new Date() > new Date(item.due_date) : false;
@@ -219,37 +233,45 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
                                                 key={item.detail_id}
                                                 onClick={() => !isReturned && toggleItem(item.detail_id!)}
                                                 className={cn(
-                                                    "p-4 rounded-2xl border-2 transition-all flex items-center justify-between group",
+                                                    "p-5 rounded-[1.8rem] border-2 transition-all flex items-center justify-between group relative overflow-hidden",
                                                     isReturned
-                                                        ? "bg-slate-50 border-slate-100 opacity-60 cursor-not-allowed"
+                                                        ? "bg-slate-50/50 border-slate-50 opacity-40 grayscale-[0.5] cursor-default"
                                                         : isSelected
-                                                            ? "bg-emerald-50 border-emerald-500 shadow-lg shadow-emerald-100 cursor-pointer"
-                                                            : "bg-white border-slate-100 hover:border-slate-200 cursor-pointer"
+                                                            ? "bg-white border-emerald-500 shadow-[0_20px_40px_rgba(16,185,129,0.08)] scale-[1.02] cursor-pointer"
+                                                            : "bg-white border-slate-50 hover:border-slate-100 hover:shadow-soft cursor-pointer"
                                                 )}
                                             >
-                                                <div className="flex items-center gap-4">
+                                                {isSelected && (
+                                                    <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500" />
+                                                )}
+                                                <div className="flex items-center gap-5">
                                                     <div className={cn(
-                                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                                                        isReturned ? "bg-slate-200" : isSelected ? "bg-emerald-500" : "bg-slate-100 group-hover:bg-slate-200"
+                                                        "w-14 h-14 rounded-[1.2rem] flex items-center justify-center transition-all duration-500",
+                                                        isReturned
+                                                            ? "bg-slate-100"
+                                                            : isSelected
+                                                                ? "bg-emerald-500 shadow-[0_12px_24px_rgba(16,185,129,0.3)] rotate-0"
+                                                                : "bg-slate-50 group-hover:rotate-0 -rotate-3 group-hover:bg-white border border-transparent group-hover:border-slate-100"
                                                     )}>
                                                         {isReturned ? (
-                                                            <CheckCircle2 className="w-5 h-5 text-slate-400" />
+                                                            <CheckCircle2 className="w-6 h-6 text-slate-300" />
                                                         ) : (
-                                                            <Package className={cn("w-5 h-5", isSelected ? "text-white" : "text-slate-400")} />
+                                                            <Package className={cn("w-6 h-6 transition-transform group-hover:scale-110", isSelected ? "text-white" : "text-slate-300")} />
                                                         )}
                                                     </div>
-                                                    <div>
-                                                        <p className={cn("text-sm font-black tracking-tight", isReturned ? "text-slate-500" : "text-slate-900")}>
+                                                    <div className="flex flex-col gap-1">
+                                                        <p className={cn("text-base font-black tracking-tight", isReturned ? "text-slate-400" : "text-slate-800")}>
                                                             {item.equipment_name}
                                                         </p>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-[10px] font-mono font-bold text-slate-400">#{item.barcode_stt}</span>
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-[10px] font-mono font-black text-slate-300 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100 uppercase tracking-widest">{item.barcode_stt}</span>
+                                                            <div className="w-1 h-1 rounded-full bg-slate-200"></div>
                                                             {isReturned ? (
-                                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded uppercase tracking-wider">Đã trả</span>
+                                                                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Reconciliation Complete</span>
                                                             ) : isLate ? (
-                                                                <span className="text-[10px] font-bold text-red-600 bg-red-100 px-1.5 py-0.5 rounded uppercase tracking-wider">Quá hạn</span>
+                                                                <span className="text-[9px] font-black text-red-500 uppercase tracking-widest animate-pulse">SLA Breach Detected</span>
                                                             ) : (
-                                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded uppercase tracking-wider">Đúng hạn</span>
+                                                                <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Within Protocol Timeline</span>
                                                             )}
                                                         </div>
                                                     </div>
@@ -257,10 +279,16 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
 
                                                 {!isReturned && (
                                                     <div className={cn(
-                                                        "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
-                                                        isSelected ? "bg-emerald-500 border-emerald-500 shadow-md shadow-emerald-200" : "border-slate-200 group-hover:border-slate-300"
+                                                        "w-8 h-8 rounded-[0.8rem] border-2 flex items-center justify-center transition-all duration-300",
+                                                        isSelected
+                                                            ? "bg-emerald-500 border-emerald-500 shadow-md rotate-0"
+                                                            : "border-slate-100 bg-slate-50 group-hover:border-slate-200 group-hover:bg-white -rotate-12 group-hover:rotate-0"
                                                     )}>
-                                                        {isSelected && <Check className="w-3.5 h-3.5 text-white stroke-[4]" />}
+                                                        {isSelected ? (
+                                                            <Check className="w-4 h-4 text-white stroke-[4]" />
+                                                        ) : (
+                                                            <RotateCcw className="w-4 h-4 text-slate-200 group-hover:text-slate-400 transition-colors" />
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>
@@ -270,51 +298,70 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
                             </div>
                         </div>
                     ) : (
-                        <div className="py-20 text-center space-y-4">
-                            <AlertTriangle className="w-16 h-16 text-amber-500 mx-auto" />
-                            <p className="text-slate-500 font-bold">Không tìm thấy thông tin phiếu</p>
+                        <div className="py-24 text-center">
+                            <div className="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mx-auto border border-amber-100 shadow-inner mb-8">
+                                <AlertTriangle className="w-12 h-12 text-amber-500" />
+                            </div>
+                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">Handover Identifier Not Responsive</p>
                         </div>
                     )}
                 </div>
 
-                {/* Footer */}
-                <div className="p-8 border-t border-slate-100 bg-slate-50/50 flex flex-col md:flex-row items-center justify-between gap-6">
-                    {error && (
-                        <div className="flex items-center gap-2 text-red-500 bg-red-50 px-4 py-2 rounded-xl border border-red-100 text-center">
-                            <AlertTriangle className="w-5 h-5" />
-                            <span className="text-xs font-black uppercase tracking-wider">{error}</span>
-                        </div>
-                    )}
+                {/* Footer - Verification Protocol */}
+                <div className="px-10 py-8 border-t border-slate-50 bg-slate-50/20 backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-8 shrink-0">
+                    <div className="flex-1">
+                        {error ? (
+                            <div className="flex items-center gap-4 bg-red-50 px-6 py-4 rounded-2xl border border-red-100 animate-in slide-in-from-left-4 shadow-sm">
+                                <div className="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center text-white shadow-lg shadow-red-200">
+                                    <AlertTriangle className="w-4 h-4" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-black text-red-400 uppercase tracking-widest leading-none mb-1">Operational Fault</span>
+                                    <span className="text-sm font-black text-red-600 tracking-tight">{error}</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-4 text-slate-300">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500/20"></div>
+                                <span className="text-[9px] font-black uppercase tracking-[0.3em] font-sans">CECICS Secured Audit Protocol v2.4</span>
+                            </div>
+                        )}
+                    </div>
 
-                    <div className="flex items-center gap-3 w-full md:w-auto">
+                    <div className="flex items-center gap-4 w-full md:w-auto">
                         <button
                             type="button"
                             onClick={() => setShowPrintView(true)}
-                            className="px-6 py-3.5 rounded-2xl font-black text-sm text-blue-600 hover:bg-blue-50 transition-all uppercase tracking-widest flex items-center gap-2"
+                            className="px-8 py-4 rounded-2xl font-black text-xs text-brand-primary bg-brand-primary/5 hover:bg-brand-primary/10 transition-all uppercase tracking-widest active:scale-95"
                         >
-                            Xem phiếu trả
+                            Manifest View
                         </button>
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-6 py-3.5 rounded-2xl font-black text-sm text-slate-500 hover:bg-slate-200 transition-all uppercase tracking-widest"
+                            className="px-6 py-4 rounded-2xl font-black text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all uppercase tracking-widest active:scale-95"
                         >
-                            Đóng
+                            Deactivate
                         </button>
                         <button
                             onClick={handleReturn}
                             disabled={submitting || selectedDetailIds.length === 0}
                             className={cn(
-                                "px-10 py-3.5 rounded-2xl font-black text-sm text-white transition-all uppercase tracking-widest shadow-xl shadow-emerald-100 flex items-center justify-center gap-3",
-                                submitting || selectedDetailIds.length === 0 ? "bg-slate-300 opacity-50 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-700 hover:shadow-2xl active:scale-95"
+                                "flex-1 md:flex-none px-12 py-4 rounded-2xl font-black text-xs text-white transition-all uppercase tracking-[0.2em] shadow-xl flex items-center justify-center gap-4 group/submit disabled:opacity-30 disabled:scale-100",
+                                submitting || selectedDetailIds.length === 0
+                                    ? "bg-slate-300 shadow-none cursor-not-allowed"
+                                    : "bg-emerald-600 shadow-[0_20px_40px_rgba(16,185,129,0.2)] hover:shadow-[0_25px_50px_rgba(16,185,129,0.3)] hover:-translate-y-1 active:scale-95"
                             )}
                         >
                             {submitting ? (
-                                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin text-white" />
+                                    Synchronizing...
+                                </>
                             ) : (
                                 <>
-                                    Xác nhận trả
-                                    <RotateCcw className="w-4 h-4" />
+                                    Audit & Confirm
+                                    <RotateCcw className="w-5 h-5 group-hover/submit:-rotate-45 transition-transform" />
                                 </>
                             )}
                         </button>
@@ -324,7 +371,7 @@ export default function ReturnTicketModal({ ticketId, ticketNo, onClose, onSucce
 
             {showPrintView && ticket && (
                 <TicketPrintView
-                    ticket={ticket}
+                    ticket={ticket!}
                     mode="return"
                     sessionCount={sessionCount}
                     onClose={() => setShowPrintView(false)}

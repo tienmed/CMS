@@ -20,7 +20,15 @@ class ReportService {
     /**
      * Thống kê thiết bị theo mức độ (H/M/L)
      */
-    async getEquipmentByLevel(): Promise<ReportData[]> {
+    async getEquipmentByLevel(startDate?: string, endDate?: string): Promise<ReportData[]> {
+        let dateFilter = '';
+        const params: any[] = [];
+
+        if (startDate && endDate) {
+            dateFilter = ' AND created_at BETWEEN ? AND ?';
+            params.push(startDate, endDate);
+        }
+
         const query = `
             SELECT 
                 CASE SUBSTRING(barcode, 3, 1)
@@ -32,10 +40,42 @@ class ReportService {
                 COUNT(*) as count 
             FROM equipment 
             WHERE deleted_at IS NULL AND barcode IS NOT NULL AND LENGTH(barcode) >= 3
+            ${dateFilter}
             GROUP BY category
             ORDER BY count DESC
         `;
-        const [rows] = await pool.query(query);
+        const [rows] = await pool.query(query, params);
+        return rows as ReportData[];
+    }
+
+    /**
+     * Thống kê thiết bị theo nhóm (MH, TB, VP)
+     */
+    async getEquipmentByGroup(startDate?: string, endDate?: string): Promise<ReportData[]> {
+        let dateFilter = '';
+        const params: any[] = [];
+
+        if (startDate && endDate) {
+            dateFilter = ' AND created_at BETWEEN ? AND ?';
+            params.push(startDate, endDate);
+        }
+
+        const query = `
+            SELECT 
+                CASE SUBSTRING(barcode, 1, 2)
+                    WHEN 'MH' THEN 'Mô hình'
+                    WHEN 'TB' THEN 'Thiết bị'
+                    WHEN 'VP' THEN 'Văn phòng'
+                    ELSE SUBSTRING(barcode, 1, 2)
+                END as category,
+                COUNT(*) as count 
+            FROM equipment 
+            WHERE deleted_at IS NULL AND barcode IS NOT NULL AND LENGTH(barcode) >= 3
+            ${dateFilter}
+            GROUP BY category
+            ORDER BY count DESC
+        `;
+        const [rows] = await pool.query(query, params);
         return rows as ReportData[];
     }
 
@@ -49,16 +89,26 @@ class ReportService {
     }
 
     /**
-     * Thống kê tỉ lệ mượn/trả theo từng phòng/bộ môn
+     * Thống kê tần suất mượn theo từng phòng/bộ môn
      */
-    async getRentalByDepartment(): Promise<ReportData[]> {
+    async getRentalByDepartment(startDate?: string, endDate?: string): Promise<ReportData[]> {
+        let dateFilter = '';
+        const params: any[] = [];
+
+        if (startDate && endDate) {
+            dateFilter = ' AND rt.rented_date BETWEEN ? AND ?';
+            params.push(startDate, endDate);
+        }
+
         const query = `
-      SELECT d.name as category, COUNT(rt.id) as count
-      FROM department d
-      LEFT JOIN rental_ticket rt ON d.id = rt.rented_by
-      GROUP BY d.name
-    `;
-        const [rows] = await pool.query(query);
+            SELECT d.name as category, COUNT(rt.id) as count
+            FROM department d
+            LEFT JOIN rental_ticket rt ON d.id = rt.rented_by ${dateFilter}
+            WHERE d.deleted_at IS NULL
+            GROUP BY d.name
+            ORDER BY count DESC
+        `;
+        const [rows] = await pool.query(query, params);
         return rows as ReportData[];
     }
 }
