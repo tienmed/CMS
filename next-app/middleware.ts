@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authCookieName, authCookieTtlSeconds } from '@/lib/auth';
-
-const AUTH_COOKIE_NAME = authCookieName;
-const AUTH_COOKIE_MAX_AGE = authCookieTtlSeconds;
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from '@/lib/constants';
 
 function hasValidSessionToken(token?: string): { valid: boolean; reason?: string; decoded?: any } {
     if (!token) {

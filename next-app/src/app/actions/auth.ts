@@ -1,6 +1,7 @@
 'use server';
 
-import { authenticateUser, authCookieName, authCookieTtlSeconds, createSessionToken } from '@/lib/auth';
+import { authenticateUser, createSessionToken } from '@/lib/auth';
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from '@/lib/constants';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -20,11 +21,11 @@ export async function loginAction(formData: FormData) {
 
         const token = createSessionToken(user);
         const cookieStore = await cookies();
-        cookieStore.set(authCookieName, token, {
+        cookieStore.set(AUTH_COOKIE_NAME, token, {
             httpOnly: true,
             sameSite: 'lax',
             secure: process.env.NODE_ENV === 'production',
-            maxAge: authCookieTtlSeconds,
+            maxAge: AUTH_COOKIE_MAX_AGE,
             path: '/',
         });
 
@@ -44,7 +45,7 @@ export async function loginAction(formData: FormData) {
 export async function logoutAction() {
     try {
         const cookieStore = await cookies();
-        cookieStore.delete(authCookieName);
+        cookieStore.delete(AUTH_COOKIE_NAME);
         redirect('/login');
     } catch (error: any) {
         if (error.message === 'NEXT_REDIRECT') throw error;

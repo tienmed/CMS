@@ -3,8 +3,10 @@ import { compare } from 'bcryptjs';
 import crypto from 'crypto';
 import { RowDataPacket } from 'mysql2';
 
-const SESSION_COOKIE = 'cecics_session';
-const SESSION_TTL_SECONDS = 60 * 60 * 12; // 12 giờ
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from './constants';
+
+const SESSION_COOKIE = AUTH_COOKIE_NAME;
+const SESSION_TTL_SECONDS = AUTH_COOKIE_MAX_AGE;
 
 export interface AuthUser {
     id?: number;
