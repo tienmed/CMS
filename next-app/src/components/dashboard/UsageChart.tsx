@@ -36,7 +36,9 @@ export default function UsageChart({ data }: UsageChartProps) {
                         tick={{ fill: '#1b67b8', fontSize: 12 }}
                     />
                     <Tooltip
+
                         cursor={{ fill: '#28bd8c1f' }}
+
                         contentStyle={{
                             borderRadius: '12px',
                             border: 'none',

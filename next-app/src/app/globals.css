@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
+
   --background: #EEEEEE;
   --foreground: #0d11e3;
+
   --brand-primary: #1b67b8;
   --brand-1: #0d11e3;
   --brand-2: #122ed5;
@@ -11,10 +13,12 @@
   --brand-5: #1f84a9;
   --brand-6: #24a09b;
   --brand-7: #28bd8c;
+
   --brand-secondary: #122ed5;
   --text-main: #0d11e3;
   --text-muted: #1b67b8;
   --border-soft: #1f84a955;
+
   --white: #ffffff;
 
   --radius-pro: 24px;
@@ -88,12 +92,15 @@ body {
 }
 
 .bento-card {
+
   @apply bg-white dark:bg-brand-1/20 rounded-[2rem] border border-border-light dark:border-brand-3/30 p-8 shadow-soft hover:shadow-pro transition-all duration-500;
+
 }
 
 .brand-surface-gradient {
   background: linear-gradient(135deg, color-mix(in srgb, var(--brand-1) 10%, white), color-mix(in srgb, var(--brand-7) 14%, white));
 }
+
 
 
 .brand-gradient-bg {
@@ -154,3 +161,4 @@ body {
 .db-status-surface { @apply bg-brand-1/10 border-brand-2/30 text-brand-3; }
 .db-status-action { @apply bg-brand-3 hover:bg-brand-2 text-white; }
 .sidebar-logout-hover { @apply hover:bg-brand-1/10 hover:text-brand-3 hover:border-brand-2/20; }
+

@@ -75,9 +75,11 @@ export default async function DashboardPage() {
                             const total = groupDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((g.count / total) * 100).toFixed(1) : '0';
                             const colors: Record<string, string> = {
+
                                 'MH': 'dist-group-mh',
                                 'TB': 'dist-group-tb',
                                 'VP': 'dist-group-vp',
+
                             };
                             return (
                                 <Link key={g.group_code} href={`/dashboard/analytics/group/${g.group_code}`} className="block hover:bg-slate-50 p-4 rounded-2xl transition-all group border border-transparent">
@@ -119,10 +121,10 @@ export default async function DashboardPage() {
                         {levelDist.map((l) => {
                             const total = levelDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((l.count / total) * 100).toFixed(1) : '0';
-                            const styles: Record<string, { color: string; bg: string; dot: string }> = {
-                                'H': { color: 'dist-level-high-text', bg: 'dist-level-high-bg', dot: 'dist-level-high-dot' },
+                            const styles: Record<string, { col                                'H': { color: 'dist-level-high-text', bg: 'dist-level-high-bg', dot: 'dist-level-high-dot' },
                                 'M': { color: 'dist-level-medium-text', bg: 'dist-level-medium-bg', dot: 'dist-level-medium-dot' },
                                 'L': { color: 'dist-level-low-text', bg: 'dist-level-low-bg', dot: 'dist-level-low-dot' },
+
                             };
                             const s = styles[l.level_code] || { color: 'dist-level-fallback-text', bg: 'dist-level-fallback-bg', dot: 'dist-level-fallback-dot' };
                             return (
