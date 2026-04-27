@@ -26,24 +26,24 @@ export default async function DashboardPage() {
     ]);
 
     const statCards = [
-        { name: 'Tổng mô hình TB', value: stats.totalEquipment, icon: 'package', color: 'text-blue-600', bg: 'bg-blue-50', type: 'equipment' },
-        { name: 'Tổng mẫu vật', value: stats.totalItems, icon: 'activity', color: 'text-purple-600', bg: 'bg-purple-50', type: 'items' },
-        { name: 'Phiếu mượn mở', value: stats.openTickets, icon: 'history', color: 'text-amber-600', bg: 'bg-amber-50', type: 'open-tickets' },
-        { name: 'Sẵn sàng mượn', value: stats.rentableItems, icon: 'check-circle', color: 'text-green-600', bg: 'bg-green-50', type: 'rentable' },
-        { name: 'Không khả dụng', value: stats.nonRentableItems, icon: 'alert-triangle', color: 'text-orange-600', bg: 'bg-orange-50', type: 'non-rentable' },
+        { name: 'Tổng mô hình TB', value: stats.totalEquipment, icon: 'package', tone: 'equipment', type: 'equipment' },
+        { name: 'Tổng mẫu vật', value: stats.totalItems, icon: 'activity', tone: 'items', type: 'items' },
+        { name: 'Phiếu mượn mở', value: stats.openTickets, icon: 'history', tone: 'open-tickets', type: 'open-tickets' },
+        { name: 'Sẵn sàng mượn', value: stats.rentableItems, icon: 'check-circle', tone: 'rentable', type: 'rentable' },
+        { name: 'Không khả dụng', value: stats.nonRentableItems, icon: 'alert-triangle', tone: 'non-rentable', type: 'non-rentable' },
     ];
 
     return (
         <div className="flex flex-col gap-4 h-full max-h-[calc(100vh-140px)] overflow-hidden font-sans">
             {/* Database Status Warning */}
             {!dbStatus.success && (
-                <div className="shrink-0 bg-red-50 border border-red-200 p-4 rounded-2xl flex items-center gap-3 text-red-700 shadow-sm animate-pulse">
+                <div className="shrink-0 db-status-surface border p-4 rounded-2xl flex items-center gap-3 shadow-sm animate-pulse">
                     <AlertTriangle className="w-5 h-5 flex-shrink-0" />
                     <div className="flex-1 text-sm">
                         <p className="font-bold">Lỗi kết nối Cơ sở dữ liệu!</p>
                         <p className="opacity-80">Vui lòng kiểm tra biến môi trường MYSQL_HOST, USER, PASS, DB trên Vercel. Lỗi: {dbStatus.error}</p>
                     </div>
-                    <Link href="https://vercel.com/dashboard" target="_blank" className="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-700 transition-colors">
+                    <Link href="https://vercel.com/dashboard" target="_blank" className="db-status-action px-4 py-2 rounded-xl text-xs font-bold transition-colors">
                         Mở Vercel
                     </Link>
                 </div>
@@ -57,10 +57,10 @@ export default async function DashboardPage() {
             {/* Main Distribution Grids - Bento Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
                 {/* Group Distribution - Larger Card */}
-                <div className="lg:col-span-2 bento-card flex flex-col min-h-[400px]">
+                <div className="lg:col-span-2 bento-card brand-surface-gradient flex flex-col min-h-[400px]">
                     <div className="flex items-center justify-between mb-12 shrink-0">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-brand-primary">
+                            <div className="w-12 h-12 rounded-2xl brand-soft-surface dashboard-group-icon flex items-center justify-center">
                                 <Layers className="w-6 h-6" />
                             </div>
                             <div>
@@ -75,15 +75,15 @@ export default async function DashboardPage() {
                             const total = groupDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((g.count / total) * 100).toFixed(1) : '0';
                             const colors: Record<string, string> = {
-                                'MH': 'bg-brand-primary',
-                                'TB': 'bg-emerald-500',
-                                'VP': 'bg-amber-500',
+                                'MH': 'dist-group-mh',
+                                'TB': 'dist-group-tb',
+                                'VP': 'dist-group-vp',
                             };
                             return (
                                 <Link key={g.group_code} href={`/dashboard/analytics/group/${g.group_code}`} className="block hover:bg-slate-50 p-4 rounded-2xl transition-all group border border-transparent">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-3">
-                                            <div className={cn("w-2 h-2 rounded-full", colors[g.group_code] || 'bg-slate-300')} />
+                                            <div className={cn("w-2 h-2 rounded-full", colors[g.group_code] || 'dist-group-fallback')} />
                                             <span className="text-sm font-bold text-gray-text">{g.label}</span>
                                         </div>
                                         <div className="flex items-baseline gap-2">
@@ -93,7 +93,7 @@ export default async function DashboardPage() {
                                     </div>
                                     <div className="w-full bg-slate-50 rounded-full h-1.5 overflow-hidden">
                                         <div
-                                            className={cn("h-full rounded-full transition-all duration-1000", colors[g.group_code] || 'bg-slate-300')}
+                                            className={cn("h-full rounded-full transition-all duration-1000", colors[g.group_code] || 'dist-group-fallback')}
                                             style={{ width: `${pct}%` }}
                                         />
                                     </div>
@@ -104,9 +104,9 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Level Distribution - Vertical Bento Card */}
-                <div className="bento-card flex flex-col min-h-[400px]">
+                <div className="bento-card brand-surface-gradient flex flex-col min-h-[400px]">
                     <div className="flex items-center gap-4 mb-12 shrink-0">
-                        <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center text-teal-600">
+                        <div className="w-12 h-12 rounded-2xl brand-soft-surface dashboard-level-icon flex items-center justify-center">
                             <PieChartIcon className="w-6 h-6" />
                         </div>
                         <div>
@@ -120,11 +120,11 @@ export default async function DashboardPage() {
                             const total = levelDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((l.count / total) * 100).toFixed(1) : '0';
                             const styles: Record<string, { color: string; bg: string; dot: string }> = {
-                                'H': { color: 'text-red-600', bg: 'bg-red-500', dot: 'bg-red-500' },
-                                'M': { color: 'text-amber-600', bg: 'bg-amber-500', dot: 'bg-amber-500' },
-                                'L': { color: 'text-emerald-600', bg: 'bg-emerald-500', dot: 'bg-emerald-500' },
+                                'H': { color: 'dist-level-high-text', bg: 'dist-level-high-bg', dot: 'dist-level-high-dot' },
+                                'M': { color: 'dist-level-medium-text', bg: 'dist-level-medium-bg', dot: 'dist-level-medium-dot' },
+                                'L': { color: 'dist-level-low-text', bg: 'dist-level-low-bg', dot: 'dist-level-low-dot' },
                             };
-                            const s = styles[l.level_code] || { color: 'text-slate-400', bg: 'bg-slate-400', dot: 'bg-slate-400' };
+                            const s = styles[l.level_code] || { color: 'dist-level-fallback-text', bg: 'dist-level-fallback-bg', dot: 'dist-level-fallback-dot' };
                             return (
                                 <Link key={l.level_code} href={`/dashboard/analytics/level/${l.level_code}`} className="block group">
                                     <div className="flex items-end justify-between mb-3">

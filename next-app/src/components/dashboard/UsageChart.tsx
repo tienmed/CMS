@@ -15,28 +15,28 @@ interface UsageChartProps {
     data: { name: string; value: number }[];
 }
 
-const COLORS = ['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e'];
+const COLORS = ['#0d11e3', '#122ed5', '#164ac6', '#1b67b8', '#1f84a9', '#24a09b', '#28bd8c'];
 
 export default function UsageChart({ data }: UsageChartProps) {
     return (
         <div className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1f84a933" />
                     <XAxis
                         dataKey="name"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+                        tick={{ fill: '#1b67b8', fontSize: 10, fontWeight: 700 }}
                         dy={10}
                     />
                     <YAxis
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#94a3b8', fontSize: 12 }}
+                        tick={{ fill: '#1b67b8', fontSize: 12 }}
                     />
                     <Tooltip
-                        cursor={{ fill: '#f8fafc' }}
+                        cursor={{ fill: '#28bd8c1f' }}
                         contentStyle={{
                             borderRadius: '12px',
                             border: 'none',
