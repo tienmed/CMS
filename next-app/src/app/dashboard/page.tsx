@@ -26,11 +26,11 @@ export default async function DashboardPage() {
     ]);
 
     const statCards = [
-        { name: 'Tổng mô hình TB', value: stats.totalEquipment, icon: 'package', color: 'text-blue-600', bg: 'bg-blue-50', type: 'equipment' },
-        { name: 'Tổng mẫu vật', value: stats.totalItems, icon: 'activity', color: 'text-purple-600', bg: 'bg-purple-50', type: 'items' },
-        { name: 'Phiếu mượn mở', value: stats.openTickets, icon: 'history', color: 'text-amber-600', bg: 'bg-amber-50', type: 'open-tickets' },
-        { name: 'Sẵn sàng mượn', value: stats.rentableItems, icon: 'check-circle', color: 'text-green-600', bg: 'bg-green-50', type: 'rentable' },
-        { name: 'Không khả dụng', value: stats.nonRentableItems, icon: 'alert-triangle', color: 'text-orange-600', bg: 'bg-orange-50', type: 'non-rentable' },
+        { name: 'Tổng mô hình TB', value: stats.totalEquipment, icon: 'package', tone: 'equipment', type: 'equipment' },
+        { name: 'Tổng mẫu vật', value: stats.totalItems, icon: 'activity', tone: 'items', type: 'items' },
+        { name: 'Phiếu mượn mở', value: stats.openTickets, icon: 'history', tone: 'open-tickets', type: 'open-tickets' },
+        { name: 'Sẵn sàng mượn', value: stats.rentableItems, icon: 'check-circle', tone: 'rentable', type: 'rentable' },
+        { name: 'Không khả dụng', value: stats.nonRentableItems, icon: 'alert-triangle', tone: 'non-rentable', type: 'non-rentable' },
     ];
 
     return (
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
                 <div className="lg:col-span-2 bento-card brand-surface-gradient flex flex-col min-h-[400px]">
                     <div className="flex items-center justify-between mb-12 shrink-0">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-brand-primary">
+                            <div className="w-12 h-12 rounded-2xl brand-soft-surface dashboard-group-icon flex items-center justify-center">
                                 <Layers className="w-6 h-6" />
                             </div>
                             <div>
@@ -75,9 +75,7 @@ export default async function DashboardPage() {
                             const total = groupDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((g.count / total) * 100).toFixed(1) : '0';
                             const colors: Record<string, string> = {
-                                'MH': 'bg-[#122ed5]',
-                                'TB': 'bg-[#1b67b8]',
-                                'VP': 'bg-[#24a09b]',
+
                             };
                             return (
                                 <Link key={g.group_code} href={`/dashboard/analytics/group/${g.group_code}`} className="block hover:bg-slate-50 p-4 rounded-2xl transition-all group border border-transparent">
@@ -106,7 +104,7 @@ export default async function DashboardPage() {
                 {/* Level Distribution - Vertical Bento Card */}
                 <div className="bento-card brand-surface-gradient flex flex-col min-h-[400px]">
                     <div className="flex items-center gap-4 mb-12 shrink-0">
-                        <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center text-teal-600">
+                        <div className="w-12 h-12 rounded-2xl brand-soft-surface dashboard-level-icon flex items-center justify-center">
                             <PieChartIcon className="w-6 h-6" />
                         </div>
                         <div>
@@ -120,9 +118,7 @@ export default async function DashboardPage() {
                             const total = levelDist.reduce((sum, x) => sum + x.count, 0);
                             const pct = total > 0 ? ((l.count / total) * 100).toFixed(1) : '0';
                             const styles: Record<string, { color: string; bg: string; dot: string }> = {
-                                'H': { color: 'text-[#122ed5]', bg: 'bg-[#122ed5]', dot: 'bg-[#122ed5]' },
-                                'M': { color: 'text-[#1b67b8]', bg: 'bg-[#1b67b8]', dot: 'bg-[#1b67b8]' },
-                                'L': { color: 'text-[#24a09b]', bg: 'bg-[#24a09b]', dot: 'bg-[#24a09b]' },
+
                             };
                             const s = styles[l.level_code] || { color: 'text-slate-400', bg: 'bg-slate-400', dot: 'bg-slate-400' };
                             return (
