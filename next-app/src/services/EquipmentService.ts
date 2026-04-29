@@ -28,7 +28,15 @@ class EquipmentService {
      */
     async getAllEquipment(): Promise<Equipment[]> {
         try {
-            const [rows] = await pool.query('SELECT * FROM equipment WHERE deleted_at IS NULL');
+            const [rows] = await pool.query(`
+                SELECT e.*,
+                       COUNT(ei.id) as item_count
+                FROM equipment e
+                LEFT JOIN equipment_item ei ON ei.equipment_id = e.id AND ei.deleted_at IS NULL
+                WHERE e.deleted_at IS NULL
+                GROUP BY e.id
+                ORDER BY e.id DESC
+            `);
             return rows as Equipment[];
         } catch (err) {
             throw new AppError('Không thể lấy danh sách thiết bị', 500, 'DB_QUERY_ERROR', false);

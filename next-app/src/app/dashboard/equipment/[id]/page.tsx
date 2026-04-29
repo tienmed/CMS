@@ -5,8 +5,13 @@ import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default async function EquipmentDetailPage({ params }: { params: { id: string } }) {
-    const equipmentId = parseInt(params.id);
+export default async function EquipmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const equipmentId = Number(id);
+
+    if (!Number.isInteger(equipmentId) || equipmentId <= 0) {
+        return <div>Không tìm thấy thiết bị</div>;
+    }
     const equipment = await equipmentService.getEquipmentById(equipmentId);
     const items = await equipmentService.getItemsByEquipmentId(equipmentId);
 

@@ -12,7 +12,6 @@ import {
   LogOut,
   Menu,
   X,
-  QrCode,
   Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -22,7 +21,6 @@ const menuItems = [
   { name: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Kho thiết bị', href: '/dashboard/equipment', icon: Package },
   { name: 'Mượn / Trả', href: '/dashboard/rental', icon: ClipboardList },
-  { name: 'Tra cứu QR', href: '/dashboard/qr', icon: QrCode },
   { name: 'Lịch sử sử dụng', href: '/dashboard/history', icon: History },
   { name: 'Báo cáo', href: '/dashboard/reports', icon: BarChart3 },
 ];

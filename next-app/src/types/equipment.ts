@@ -10,6 +10,7 @@ export interface Equipment {
     created_at?: Date;
     updated_at?: Date;
     deleted_at?: Date;
+    item_count?: number;
 }
 
 export interface EquipmentItem {
