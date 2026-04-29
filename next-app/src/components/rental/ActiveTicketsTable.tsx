@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Search, RotateCcw } from 'lucide-react';
 import { RentalTicket } from '@/types/rental';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -14,6 +14,8 @@ export default function ActiveTicketsTable({ initialTickets }: ActiveTicketsTabl
   const [tickets] = useState(initialTickets);
   const [selectedTicket, setSelectedTicket] = useState<{ id: number; no: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -36,6 +38,32 @@ export default function ActiveTicketsTable({ initialTickets }: ActiveTicketsTabl
       t.ticket_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.rented_full_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    const updateRowsPerPage = () => {
+      if (window.innerWidth < 768) return;
+      const viewportHeight = window.innerHeight;
+      const reservedHeight = 460;
+      const rowHeight = 56;
+      const visibleRows = Math.floor((viewportHeight - reservedHeight) / rowHeight);
+      setRowsPerPage(Math.max(4, Math.min(visibleRows, 12)));
+    };
+
+    updateRowsPerPage();
+    window.addEventListener('resize', updateRowsPerPage);
+    return () => window.removeEventListener('resize', updateRowsPerPage);
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTickets.length / rowsPerPage));
+  const paginatedTickets = filteredTickets.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
 
   return (
     <>
@@ -81,7 +109,7 @@ export default function ActiveTicketsTable({ initialTickets }: ActiveTicketsTabl
               </tr>
             </thead>
             <tbody>
-              {filteredTickets.map((ticket) => (
+              {paginatedTickets.map((ticket) => (
                 <tr key={ticket.id} className="ticket-row">
                   <td className="ticket-td-strong">{ticket.ticket_no}</td>
                   <td className="ticket-td">{ticket.rented_full_name}</td>
@@ -97,6 +125,32 @@ export default function ActiveTicketsTable({ initialTickets }: ActiveTicketsTabl
           </table>
 
           {filteredTickets.length === 0 && <div className="ticket-empty">Không có phiếu phù hợp.</div>}
+
+          {filteredTickets.length > 0 && (
+            <div className="ticket-pagination">
+              <p className="ticket-pagination-text">
+                Trang {currentPage}/{totalPages} • {filteredTickets.length} phiếu
+              </p>
+              <div className="ticket-pagination-actions">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="ticket-page-btn"
+                >
+                  Trước
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="ticket-page-btn"
+                >
+                  Sau
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
