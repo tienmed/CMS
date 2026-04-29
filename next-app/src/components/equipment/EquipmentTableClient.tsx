@@ -39,10 +39,14 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                         className="w-full pl-16 pr-8 h-14 rounded-2xl bg-background border border-transparent focus:bg-white focus:border-brand-primary/20 focus:ring-8 focus:ring-brand-primary/5 transition-all text-sm font-bold placeholder:text-gray-text/40 text-navy"
                     />
                 </div>
+                <div className="flex items-center gap-2 ml-auto">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Tổng: {equipment.length}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-brand-primary">Hiển thị: {filteredEquipment.length}</span>
+                </div>
             </div>
 
             <div className="bento-card !p-0 overflow-hidden">
-                <div className="overflow-x-auto">
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-background/20 dark:bg-white/5">
@@ -102,6 +106,24 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                             })}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="md:hidden p-4 space-y-3">
+                    {filteredEquipment.map((item) => {
+                        const detailHref = `/dashboard/equipment/${item.id}`;
+                        return (
+                            <Link key={item.id} href={detailHref} className="block rounded-2xl border border-slate-200 p-4 active:scale-[0.99] transition bg-white">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div>
+                                        <p className="font-black text-slate-900 leading-tight">{item.name}</p>
+                                        <p className="text-[11px] text-slate-500 font-mono mt-1">{item.barcode || '---'}</p>
+                                    </div>
+                                    <span className="text-xs font-black text-brand-primary bg-blue-50 px-3 py-1.5 rounded-xl">{item.item_count || 0}</span>
+                                </div>
+                                <p className="text-xs text-slate-500 italic mt-2 line-clamp-2">{item.note || '---'}</p>
+                            </Link>
+                        );
+                    })}
                 </div>
                 {filteredEquipment.length === 0 && (
                     <div className="p-20 text-center">
