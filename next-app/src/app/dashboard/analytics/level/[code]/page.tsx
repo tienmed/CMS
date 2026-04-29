@@ -119,7 +119,7 @@ export default async function LevelDetailPage({ params }: { params: Promise<{ co
 
                             {group.items.length === 0 && (
                                 <div className="py-16 text-center">
-                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">No equipment found in this category</p>
+                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Không có thiết bị trong mức này</p>
                                 </div>
                             )}
                         </div>

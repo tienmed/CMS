@@ -26,8 +26,8 @@ export default async function DashboardPage() {
     ]);
 
     const statCards = [
-        { name: 'Tổng mô hình TB', value: stats.totalEquipment, icon: 'package', tone: 'equipment', type: 'equipment' },
-        { name: 'Tổng mẫu vật', value: stats.totalItems, icon: 'activity', tone: 'items', type: 'items' },
+        { name: 'Tổng chủng loại MH-TB', value: stats.totalEquipment, icon: 'package', tone: 'equipment', type: 'equipment' },
+        { name: 'Tổng số lượng MH-TB', value: stats.totalItems, icon: 'activity', tone: 'items', type: 'items' },
         { name: 'Phiếu mượn mở', value: stats.openTickets, icon: 'history', tone: 'open-tickets', type: 'open-tickets' },
         { name: 'Sẵn sàng mượn', value: stats.rentableItems, icon: 'check-circle', tone: 'rentable', type: 'rentable' },
         { name: 'Không khả dụng', value: stats.nonRentableItems, icon: 'alert-triangle', tone: 'non-rentable', type: 'non-rentable' },
