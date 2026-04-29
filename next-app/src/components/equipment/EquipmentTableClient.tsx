@@ -48,6 +48,7 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                             <tr className="bg-background/20 dark:bg-white/5">
                                 <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em]">Tên thiết bị</th>
                                 <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em]">Barcode Identifier</th>
+                                <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em] text-center">Số lượng</th>
                                 <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em]">Annotation</th>
                                 <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em] text-right">System Action</th>
                             </tr>
@@ -74,6 +75,13 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                                         <td className="px-10 py-10">
                                             <Link href={detailHref} className="block w-fit">
                                                 <span className="text-xs font-black text-navy bg-indigo-50 dark:bg-indigo-900/20 px-4 py-2.5 rounded-xl border border-indigo-100 dark:border-indigo-800 font-mono tracking-wider">{item.barcode || '---'}</span>
+                                            </Link>
+                                        </td>
+                                        <td className="px-10 py-10 text-center">
+                                            <Link href={detailHref} className="inline-flex">
+                                                <span className="text-xs font-black text-brand-primary bg-blue-50 px-4 py-2 rounded-xl">
+                                                    {item.item_count || 0}
+                                                </span>
                                             </Link>
                                         </td>
                                         <td className="px-10 py-10 text-xs font-bold text-gray-text max-w-xs truncate italic opacity-60">
