@@ -5,8 +5,19 @@ import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default async function EquipmentDetailPage({ params }: { params: { id: string } }) {
-    const equipmentId = parseInt(params.id);
+function getStatusTone(isRentable: boolean | number) {
+    return isRentable
+        ? 'text-green-800 bg-green-100 border border-green-200'
+        : 'text-amber-800 bg-amber-100 border border-amber-200';
+}
+
+export default async function EquipmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const equipmentId = Number(id);
+
+    if (!Number.isInteger(equipmentId) || equipmentId <= 0) {
+        return <div>Không tìm thấy thiết bị</div>;
+    }
     const equipment = await equipmentService.getEquipmentById(equipmentId);
     const items = await equipmentService.getItemsByEquipmentId(equipmentId);
 
@@ -73,10 +84,7 @@ export default async function EquipmentDetailPage({ params }: { params: { id: st
                                         </button>
                                     </div>
                                     <h4 className="font-bold text-slate-800 mb-2">STT: {item.stt}</h4>
-                                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase ${item.is_rentable
-                                        ? 'text-green-600 bg-green-50'
-                                        : 'text-amber-600 bg-amber-50'
-                                        }`}>
+                                    <span className={`text-xs font-black px-3 py-1.5 rounded-full uppercase ${getStatusTone(item.status_is_rentable ?? false)}`}>
                                         {item.status_name}
                                     </span>
                                 </div>
