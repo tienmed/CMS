@@ -75,11 +75,11 @@ body {
 
 /* Dashboard layout */
 .dashboard-shell {
-  @apply min-h-screen bg-background lg:pl-72;
+  @apply min-h-screen bg-background lg:pl-72 lg:h-screen lg:overflow-hidden;
 }
 
 .dashboard-main {
-  @apply min-h-screen flex flex-col;
+  @apply min-h-screen flex flex-col lg:h-screen lg:overflow-hidden;
 }
 
 .dashboard-header {
@@ -107,7 +107,7 @@ body {
 }
 
 .dashboard-content {
-  @apply p-4 md:p-8 flex-1 min-h-0;
+  @apply p-4 md:p-8 flex-1 min-h-0 overflow-x-hidden;
 }
 
 /* Sidebar */
@@ -201,7 +201,7 @@ body {
 }
 
 .rental-main {
-  @apply flex-1 min-h-0;
+  @apply flex-1 min-h-0 overflow-hidden;
 }
 
 /* Active tickets */
@@ -234,7 +234,7 @@ body {
 }
 
 .ticket-content {
-  @apply flex-1 min-h-0 overflow-auto;
+  @apply flex-1 min-h-0 overflow-hidden flex flex-col;
 }
 
 .ticket-mobile-list {
@@ -262,7 +262,7 @@ body {
 }
 
 .ticket-thead {
-  @apply bg-slate-50 text-muted;
+  @apply bg-slate-50 text-muted sticky top-0 z-10;
 }
 
 .ticket-th {
@@ -291,6 +291,22 @@ body {
 
 .ticket-empty {
   @apply p-8 text-center text-muted text-sm;
+}
+
+.ticket-pagination {
+  @apply hidden md:flex items-center justify-between border-t border-border-soft px-5 py-3 bg-white;
+}
+
+.ticket-pagination-text {
+  @apply text-sm text-muted;
+}
+
+.ticket-pagination-actions {
+  @apply flex items-center gap-2;
+}
+
+.ticket-page-btn {
+  @apply h-9 px-3 rounded-lg border border-border-soft text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50;
 }
 
 /* Create rental modal */
