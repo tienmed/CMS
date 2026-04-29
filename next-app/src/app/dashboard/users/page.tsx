@@ -49,10 +49,6 @@ export default function UserManagementPage() {
         confirmPassword: ''
     });
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
-
     const fetchUsers = async () => {
         setLoading(true);
         try {
@@ -67,6 +63,10 @@ export default function UserManagementPage() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     const handleCreateUser = async (e: React.FormEvent) => {
         e.preventDefault();
