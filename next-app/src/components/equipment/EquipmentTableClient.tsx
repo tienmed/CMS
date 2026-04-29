@@ -25,6 +25,10 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
             return name.includes(keyword) || barcode.includes(keyword) || note.includes(keyword);
         });
     }, [equipment, searchTerm]);
+    const maxItemCount = useMemo(
+        () => Math.max(...equipment.map((item) => item.item_count || 0), 1),
+        [equipment]
+    );
 
     return (
         <>
@@ -40,8 +44,8 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                     />
                 </div>
                 <div className="flex items-center gap-2 ml-auto">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Tổng: {equipment.length}</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-brand-primary">Hiển thị: {filteredEquipment.length}</span>
+                    <span className="text-xs font-black uppercase tracking-wide text-slate-600">Tổng: {equipment.length}</span>
+                    <span className="text-xs font-black uppercase tracking-wide text-blue-700">Hiển thị: {filteredEquipment.length}</span>
                 </div>
             </div>
 
@@ -51,10 +55,10 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                         <thead>
                             <tr className="bg-background/20 dark:bg-white/5">
                                 <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em]">Tên thiết bị</th>
-                                <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em]">Barcode Identifier</th>
+                                <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em]">Mã barcode</th>
                                 <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em] text-center">Số lượng</th>
-                                <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em]">Annotation</th>
-                                <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em] text-right">System Action</th>
+                                <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em]">Ghi chú</th>
+                                <th className="px-10 py-8 font-black text-gray-text text-[11px] uppercase tracking-[0.2em] text-right">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border-light dark:divide-white/5">
@@ -62,7 +66,7 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                                 const detailHref = `/dashboard/equipment/${item.id}`;
 
                                 return (
-                                    <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors group">
+                                    <tr key={item.id} className="hover:bg-blue-50/70 transition-colors group">
                                         <td className="px-10 py-10">
                                             <Link href={detailHref} className="block">
                                                 <div className="flex items-center gap-6">
@@ -82,9 +86,15 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                                             </Link>
                                         </td>
                                         <td className="px-10 py-10 text-center">
-                                            <Link href={detailHref} className="inline-flex">
-                                                <span className="text-xs font-black text-brand-primary bg-blue-50 px-4 py-2 rounded-xl">
+                                            <Link href={detailHref} className="inline-flex flex-col items-center gap-1 min-w-24">
+                                                <span className="text-sm font-black text-blue-700 bg-blue-100 px-4 py-1.5 rounded-xl">
                                                     {item.item_count || 0}
+                                                </span>
+                                                <span className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                                    <span
+                                                        className="block h-full bg-blue-500 rounded-full"
+                                                        style={{ width: `${Math.max(((item.item_count || 0) / maxItemCount) * 100, 8)}%` }}
+                                                    />
                                                 </span>
                                             </Link>
                                         </td>
@@ -98,7 +108,7 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                                                 href={detailHref}
                                                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-background dark:bg-white/5 text-xs font-black text-navy hover:bg-brand-primary hover:text-white transition-all uppercase tracking-widest shadow-sm hover:shadow-pro whitespace-nowrap"
                                             >
-                                                View Matrix
+                                                Xem chi tiết
                                             </Link>
                                         </td>
                                     </tr>
@@ -112,14 +122,20 @@ export default function EquipmentTableClient({ equipment }: EquipmentTableClient
                     {filteredEquipment.map((item) => {
                         const detailHref = `/dashboard/equipment/${item.id}`;
                         return (
-                            <Link key={item.id} href={detailHref} className="block rounded-2xl border border-slate-200 p-4 active:scale-[0.99] transition bg-white">
+                            <Link key={item.id} href={detailHref} className="block rounded-2xl border border-slate-200 p-4 active:scale-[0.99] transition bg-white shadow-sm">
                                 <div className="flex items-start justify-between gap-3">
                                     <div>
-                                        <p className="font-black text-slate-900 leading-tight">{item.name}</p>
-                                        <p className="text-[11px] text-slate-500 font-mono mt-1">{item.barcode || '---'}</p>
+                                        <p className="font-black text-base text-slate-900 leading-tight">{item.name}</p>
+                                        <p className="text-xs text-slate-600 font-mono mt-1">{item.barcode || '---'}</p>
                                     </div>
-                                    <span className="text-xs font-black text-brand-primary bg-blue-50 px-3 py-1.5 rounded-xl">{item.item_count || 0}</span>
+                                    <span className="text-sm font-black text-blue-700 bg-blue-100 px-3 py-1.5 rounded-xl">{item.item_count || 0}</span>
                                 </div>
+                                <span className="mt-2 block w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                    <span
+                                        className="block h-full bg-blue-500 rounded-full"
+                                        style={{ width: `${Math.max(((item.item_count || 0) / maxItemCount) * 100, 8)}%` }}
+                                    />
+                                </span>
                                 <p className="text-xs text-slate-500 italic mt-2 line-clamp-2">{item.note || '---'}</p>
                             </Link>
                         );
