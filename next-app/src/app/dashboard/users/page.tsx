@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import {
-    Users,
     UserPlus,
     Key,
     Trash2,
@@ -10,7 +9,6 @@ import {
     X,
     ShieldCheck,
     Mail,
-    Building2,
     RefreshCw,
     CheckCircle2,
     AlertCircle
@@ -91,7 +89,7 @@ export default function UserManagementPage() {
                 const err = await res.json();
                 showNotification('error', err.error || 'Có lỗi xảy ra!');
             }
-        } catch (error) {
+        } catch {
             showNotification('error', 'Lỗi kết nối!');
         }
     };
@@ -119,7 +117,7 @@ export default function UserManagementPage() {
                 const err = await res.json();
                 showNotification('error', err.error || 'Có lỗi xảy ra!');
             }
-        } catch (error) {
+        } catch {
             showNotification('error', 'Lỗi kết nối!');
         }
     };
@@ -140,7 +138,7 @@ export default function UserManagementPage() {
                 const err = await res.json();
                 showNotification('error', err.error || 'Có lỗi xảy ra!');
             }
-        } catch (error) {
+        } catch {
             showNotification('error', 'Lỗi kết nối!');
         }
     };
@@ -198,7 +196,32 @@ export default function UserManagementPage() {
 
             {/* Users Table - Bento Style */}
             <div className="bento-card !p-0 flex flex-col min-h-0 overflow-hidden">
-                <div className="flex-1 overflow-x-auto custom-scrollbar">
+                <div className="md:hidden p-4 space-y-3">
+                    {loading ? (
+                        Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="h-28 rounded-2xl bg-slate-100 animate-pulse" />
+                        ))
+                    ) : filteredUsers.length === 0 ? (
+                        <div className="rounded-2xl border border-slate-200 p-8 text-center text-xs font-black uppercase tracking-widest text-slate-400">Không có dữ liệu phù hợp</div>
+                    ) : filteredUsers.map((user) => (
+                        <div key={user.id} className="rounded-2xl border border-slate-200 p-4 bg-white shadow-sm space-y-3">
+                            <div className="flex items-start justify-between gap-3">
+                                <div>
+                                    <p className="font-black text-slate-900">{user.name}</p>
+                                    <p className="text-xs font-bold text-slate-600 mt-1">@{user.username}</p>
+                                    <p className="text-xs text-slate-500 mt-1 break-all">{user.email || 'no-email@cecics.vn'}</p>
+                                </div>
+                                <span className="text-[10px] font-black uppercase px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">{user.department_id ? `DEP-${user.department_id}` : 'ROOT'}</span>
+                            </div>
+                            <p className="text-[11px] text-slate-500 font-bold">Ngày tạo: {new Date(user.created_at).toLocaleDateString('vi-VN')}</p>
+                            <div className="flex gap-2 pt-1">
+                                <button onClick={() => setShowResetModal(user)} className="flex-1 h-10 rounded-xl bg-amber-50 text-amber-700 text-xs font-black">Đặt lại mật khẩu</button>
+                                <button onClick={() => setShowDeleteModal(user)} disabled={user.username === 'super_admin'} className={cn("flex-1 h-10 rounded-xl text-xs font-black", user.username === 'super_admin' ? "bg-slate-100 text-slate-400" : "bg-red-50 text-red-600")}>Xóa</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="hidden md:block flex-1 overflow-x-auto custom-scrollbar">
                     <table className="w-full text-left border-collapse">
                         <thead className="sticky top-0 z-10 bg-background/50 dark:bg-black/50 backdrop-blur-md text-[11px] uppercase font-black text-gray-text tracking-[0.3em]">
                             <tr>
