@@ -38,7 +38,19 @@ export default function RecentActivity({ history }: { history: UsageHistory[] })
                 <button className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors bg-blue-50 px-4 py-2 rounded-xl">Xem tất cả</button>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="md:hidden space-y-3">
+                {history.map((record) => (
+                    <button key={record.id} onClick={() => setSelectedTicket(record)} className="w-full text-left rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-1">
+                        <div className="flex justify-between gap-2">
+                            <p className="font-black text-slate-900">{record.ticket_no}</p>
+                            <span className={cn("text-[10px] font-black uppercase px-2 py-1 rounded-lg", record.status === 'returned' ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700")}>{record.status === 'returned' ? 'Đã trả' : 'Đang mượn'}</span>
+                        </div>
+                        <p className="text-xs text-slate-600 font-bold">{record.renter} • {record.department_name}</p>
+                        <p className="text-xs text-slate-500">{formatDate(record.date)} {formatTime(record.date)}</p>
+                    </button>
+                ))}
+            </div>
+            <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-slate-100 bg-slate-50/50">

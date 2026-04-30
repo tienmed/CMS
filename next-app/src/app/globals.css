@@ -107,7 +107,7 @@ body {
 }
 
 .dashboard-content {
-  @apply p-4 md:p-8 flex-1 min-h-0 overflow-x-hidden;
+  @apply p-4 md:p-8 flex-1 min-h-0 overflow-x-hidden overflow-y-auto;
 }
 
 /* Sidebar */
@@ -527,19 +527,19 @@ body {
 
 /* Dashboard structural layouts */
 .dashboard-v2-container {
-  @apply flex flex-col gap-4 h-full max-h-[calc(100vh-140px)] overflow-hidden font-sans;
+  @apply flex flex-col gap-4 h-full font-sans overflow-visible md:max-h-[calc(100vh-140px)] md:overflow-hidden;
 }
 
 .dashboard-v2-grid {
-  @apply grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0;
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 flex-1 min-h-0;
 }
 
 .dashboard-v2-bento-main {
-  @apply lg:col-span-2 bg-gradient-to-br from-surface to-accent-2/10 shadow-[var(--shadow-card)] border border-border-soft rounded-2xl flex flex-col min-h-[400px] p-6;
+  @apply lg:col-span-2 bg-gradient-to-br from-surface to-accent-2/10 shadow-[var(--shadow-card)] border border-border-soft rounded-2xl flex flex-col min-h-[320px] md:min-h-[400px] p-4 md:p-6;
 }
 
 .dashboard-v2-bento-side {
-  @apply bg-gradient-to-br from-surface to-accent-2/10 shadow-[var(--shadow-card)] border border-border-soft rounded-2xl flex flex-col min-h-[400px] p-6;
+  @apply bg-gradient-to-br from-surface to-accent-2/10 shadow-[var(--shadow-card)] border border-border-soft rounded-2xl flex flex-col min-h-[320px] md:min-h-[400px] p-4 md:p-6;
 }
 
 .dashboard-v2-header-icon {
@@ -547,7 +547,7 @@ body {
 }
 
 .dashboard-v2-title {
-  @apply font-black text-primary text-2xl tracking-tighter uppercase font-sans;
+  @apply font-black text-primary text-xl md:text-2xl tracking-tighter uppercase font-sans;
 }
 
 .dashboard-v2-subtitle {
