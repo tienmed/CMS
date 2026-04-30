@@ -104,7 +104,25 @@ export default async function DetailedAnalyticsPage({ params }: { params: Promis
                     </div>
 
                     <div className="p-0">
-                        <div className="overflow-x-auto">
+                        <div className="md:hidden p-4 space-y-3">
+                            {groups.length > 0 ? groups.map(g => {
+                                const rowTotal = levels.reduce((sum, l) => sum + matrix[g][l], 0);
+                                return (
+                                    <div key={g} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                                        <div className="flex items-center justify-between">
+                                            <p className="font-black text-slate-900">{GROUP_LABELS[g] || g}</p>
+                                            <span className="text-sm font-black text-brand-primary">{rowTotal}</span>
+                                        </div>
+                                        <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                                            {levels.map((l) => (
+                                                <div key={l} className="rounded-lg bg-slate-50 p-2 text-center">{l}: {matrix[g][l]}</div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            }) : <div className="p-6 text-center text-xs font-black text-slate-400">No distribution data synchronized</div>}
+                        </div>
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full border-collapse">
                                 <thead>
                                     <tr className="bg-background/10 dark:bg-white/5">
