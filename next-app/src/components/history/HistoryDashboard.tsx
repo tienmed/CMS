@@ -2,18 +2,14 @@
 
 import React, { useState } from 'react';
 import {
-    History,
     Search,
-    Filter,
     Calendar,
     Download,
     ChevronRight,
     FileText,
     X,
     Building2,
-    User,
     Package,
-    Tag,
     Info,
     ArrowUpDown
 } from 'lucide-react';
@@ -53,14 +49,6 @@ export default function HistoryDashboard({ initialHistory }: HistoryDashboardPro
         return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
     });
 
-    const formatDate = (date: Date) => {
-        if (!isMounted) return "";
-        return new Date(date).toLocaleDateString('vi-VN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    };
 
     const formatShortDate = (date: Date) => {
         if (!isMounted) return "";
@@ -124,7 +112,20 @@ export default function HistoryDashboard({ initialHistory }: HistoryDashboardPro
 
             {/* Main Table Content - Premium Bento Table */}
             <div className="bento-card !p-0 flex-1 min-h-0 flex flex-col overflow-hidden">
-                <div className="flex-1 overflow-x-auto custom-scrollbar">
+                <div className="md:hidden p-4 space-y-3 overflow-y-auto">
+                    {filteredHistory.map((record) => (
+                        <button key={record.id} onClick={() => setSelectedTicket(record)} className="w-full text-left rounded-2xl border border-slate-200 p-4 bg-white shadow-sm space-y-2">
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="font-black text-slate-900">{record.ticket_no}</span>
+                                <span className={cn("text-[10px] font-black uppercase px-2.5 py-1 rounded-lg", record.status === 'returned' ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700")}>{record.status === 'returned' ? 'Đã trả' : 'Đang mượn'}</span>
+                            </div>
+                            <p className="text-xs font-bold text-slate-600">{record.renter} • DEP-{record.department_name}</p>
+                            <p className="text-xs text-slate-500">{formatShortDate(record.date)} • {record.items.length} thiết bị</p>
+                            <p className="text-xs text-slate-500 truncate">{record.note || 'Không có ghi chú'}</p>
+                        </button>
+                    ))}
+                </div>
+                <div className="hidden md:block flex-1 overflow-x-auto custom-scrollbar">
                     <table className="w-full text-left border-collapse">
                         <thead className="sticky top-0 z-10 bg-surface/90 backdrop-blur-md text-[11px] uppercase font-black text-muted tracking-[0.3em]">
                             <tr>
