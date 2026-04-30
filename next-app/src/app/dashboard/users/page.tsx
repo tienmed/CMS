@@ -155,7 +155,7 @@ export default function UserManagementPage() {
     );
 
     return (
-        <div className="flex flex-col gap-10 h-full max-h-[calc(100vh-140px)] overflow-hidden font-sans animate-in fade-in duration-700">
+        <div className="flex flex-col gap-6 md:gap-10 h-full font-sans overflow-visible md:max-h-[calc(100vh-140px)] md:overflow-hidden animate-in fade-in duration-700">
             {/* Header section - Pro Max Style */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10 shrink-0 border-b border-border-light dark:border-white/5 pb-10">
                 <div>
@@ -195,7 +195,7 @@ export default function UserManagementPage() {
             )}
 
             {/* Users Table - Bento Style */}
-            <div className="bento-card !p-0 flex flex-col min-h-0 overflow-hidden">
+            <div className="bento-card !p-0 flex flex-col min-h-0 overflow-visible md:overflow-hidden">
                 <div className="md:hidden p-4 space-y-3">
                     {loading ? (
                         Array.from({ length: 4 }).map((_, i) => (

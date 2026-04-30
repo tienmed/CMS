@@ -1,15 +1,6 @@
 import { dashboardService } from '@/services/DashboardService';
-import { rentalService } from '@/services/RentalService';
 import Link from 'next/link';
-import {
-    Package,
-    CheckCircle2,
-    AlertTriangle,
-    Activity,
-    History,
-    Layers,
-    PieChart as PieChartIcon
-} from 'lucide-react';
+import { AlertTriangle, Layers, PieChart as PieChartIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StatCards from '@/components/dashboard/StatCards';
 import { testConnection } from '@/lib/db';
@@ -41,7 +32,7 @@ export default async function DashboardPage() {
                     <AlertTriangle className="w-5 h-5 flex-shrink-0" />
                     <div className="flex-1 text-sm">
                         <p className="font-bold">Lỗi kết nối Cơ sở dữ liệu!</p>
-                        <p className="opacity-80">Vui lòng kiểm tra biến môi trường MYSQL_HOST, USER, PASS, DB trên Vercel. Lỗi: {dbStatus.error}</p>
+                        <p className="opacity-80 break-words">Vui lòng kiểm tra biến môi trường MYSQL_HOST, USER, PASS, DB trên Vercel. Lỗi: {dbStatus.error}</p>
                     </div>
                     <Link href="https://vercel.com/dashboard" target="_blank" className="db-status-action px-4 py-2 rounded-xl text-xs font-bold transition-colors">
                         Mở Vercel
