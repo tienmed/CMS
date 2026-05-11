@@ -43,26 +43,25 @@ class DashboardService {
             const query = `
                 SELECT 
                     (SELECT COUNT(*) FROM equipment WHERE deleted_at IS NULL) as totalEquipment,
-                    (SELECT COUNT(*) FROM equipment_item WHERE deleted_at IS NULL) as totalItems,
-                    (SELECT COUNT(*) FROM equipment_item ei 
-                     JOIN equipment_status es ON ei.equipment_status_id = es.id 
-                     WHERE es.is_rentable = 1 AND ei.deleted_at IS NULL) as rentableItems,
-                    (SELECT COUNT(*) FROM equipment_item ei 
-                     JOIN equipment_status es ON ei.equipment_status_id = es.id 
-                     WHERE es.is_rentable = 0 AND ei.deleted_at IS NULL) as nonRentableItems,
                     (SELECT COUNT(*) FROM rental_ticket 
-                     WHERE completed_date IS NULL AND deleted_at IS NULL) as openTickets
+                     WHERE completed_date IS NULL AND deleted_at IS NULL) as openTickets,
+                    COUNT(ei.id) as totalItems,
+                    SUM(CASE WHEN es.is_rentable = 1 THEN 1 ELSE 0 END) as rentableItems,
+                    SUM(CASE WHEN es.is_rentable = 0 THEN 1 ELSE 0 END) as nonRentableItems
+                FROM equipment_item ei
+                JOIN equipment_status es ON ei.equipment_status_id = es.id
+                WHERE ei.deleted_at IS NULL
             `;
 
             const [rows] = await pool.query(query) as any;
             const stats = rows[0];
 
             return {
-                totalEquipment: Number(stats.totalEquipment),
-                totalItems: Number(stats.totalItems),
-                rentableItems: Number(stats.rentableItems),
-                nonRentableItems: Number(stats.nonRentableItems),
-                openTickets: Number(stats.openTickets)
+                totalEquipment: Number(stats.totalEquipment || 0),
+                totalItems: Number(stats.totalItems || 0),
+                rentableItems: Number(stats.rentableItems || 0),
+                nonRentableItems: Number(stats.nonRentableItems || 0),
+                openTickets: Number(stats.openTickets || 0)
             };
         } catch (error) {
             console.error('Error fetching dashboard stats:', error);

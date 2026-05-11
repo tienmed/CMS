@@ -1,4 +1,5 @@
 import pool from '@/lib/db';
+import { aiService, AIInsight } from './AIService';
 
 export interface ReportData {
     category: string;
@@ -110,6 +111,30 @@ class ReportService {
         `;
         const [rows] = await pool.query(query, params);
         return rows as ReportData[];
+    }
+
+    /**
+     * Sinh báo cáo tóm tắt điều hành bằng AI (Qwen3)
+     */
+    async generateAIExecutiveSummary(): Promise<AIInsight> {
+        // 1. Thu thập dữ liệu từ các báo cáo thành phần
+        const [byGroup, byLevel, byDept] = await Promise.all([
+            this.getEquipmentByGroup(),
+            this.getEquipmentByLevel(),
+            this.getRentalByDepartment()
+        ]);
+
+        const aggregatedData = {
+            equipmentDistribution: {
+                byGroup,
+                byLevel
+            },
+            departmentUsage: byDept,
+            generatedAt: new Date().toISOString()
+        };
+
+        // 2. Gọi AI để tổng hợp nhận định
+        return await aiService.getExecutiveSummary(aggregatedData);
     }
 }
 

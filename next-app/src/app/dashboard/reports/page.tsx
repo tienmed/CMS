@@ -52,10 +52,16 @@ export default async function ReportsPage({ searchParams }: Props) {
                 </div>
                 <div className="flex items-center gap-3">
                     <ReportFilters />
-                    <button className="bg-slate-900 text-white px-5 py-3 rounded-2xl font-black text-xs hover:bg-slate-800 transition-all flex items-center gap-2 shadow-xl shadow-slate-200 active:scale-95 uppercase tracking-widest">
+                    <Link 
+                        href={{
+                            pathname: '/dashboard/reports/generate',
+                            query: params
+                        }}
+                        className="bg-slate-900 text-white px-5 py-3 rounded-2xl font-black text-xs hover:bg-slate-800 transition-all flex items-center gap-2 shadow-xl shadow-slate-200 active:scale-95 uppercase tracking-widest"
+                    >
                         <Download className="w-4 h-4" />
-                        Xuất báo cáo
-                    </button>
+                        Xuất báo cáo AI
+                    </Link>
                 </div>
             </div>
 

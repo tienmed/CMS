@@ -1,8 +1,11 @@
 import { dashboardService } from '@/services/DashboardService';
+import { maintenanceService } from '@/services/MaintenanceService';
+import { aiService } from '@/services/AIService';
 import Link from 'next/link';
 import { AlertTriangle, Layers, PieChart as PieChartIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StatCards from '@/components/dashboard/StatCards';
+import MaintenanceInsight from '@/components/dashboard/MaintenanceInsight';
 import { testConnection } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
@@ -10,10 +13,17 @@ export const dynamic = 'force-dynamic';
 export default async function DashboardPage() {
     const dbStatus = await testConnection();
 
-    const [stats, groupDist, levelDist] = await Promise.all([
+    const [stats, groupDist, levelDist, maintenanceData] = await Promise.all([
         dashboardService.getStats(),
         dashboardService.getGroupDistribution(),
         dashboardService.getLevelDistribution(),
+        maintenanceService.getMaintenancePredictions().then(async (preds) => {
+            const insight = await aiService.getMaintenanceInsight(preds);
+            return {
+                insight,
+                totalCritical: preds.filter(p => p.health_score < 60).length
+            };
+        })
     ]);
 
     const statCards = [
@@ -43,6 +53,14 @@ export default async function DashboardPage() {
             {/* Statistics Row */}
             <div className="shrink-0">
                 <StatCards stats={statCards} />
+            </div>
+
+            {/* AI Insight Section */}
+            <div className="shrink-0 mb-8">
+                <MaintenanceInsight 
+                    insight={maintenanceData.insight} 
+                    totalCritical={maintenanceData.totalCritical} 
+                />
             </div>
 
             {/* Main Distribution Grids - Bento Layout */}

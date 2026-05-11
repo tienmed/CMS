@@ -15,8 +15,32 @@ export default function QRScanner({ onScanSuccess, onClose, continuous = false }
   const lastScanRef = useRef<{ value: string; time: number }>({ value: '', time: 0 });
   const [isStarting, setIsStarting] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastScanDisplay, setLastScanDisplay] = useState<string | null>(null);
+  const [isFlashing, setIsFlashing] = useState(false);
 
   const SCANNER_ID = 'qr-reader';
+
+  const playBeep = () => {
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // 440Hz (A4)
+      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
+      gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.1);
+    } catch (e) {
+      console.error('Audio feedback failed', e);
+    }
+  };
 
   useEffect(() => {
     const startScanner = async () => {
@@ -31,8 +55,14 @@ export default function QRScanner({ onScanSuccess, onClose, continuous = false }
             const value = decodedText.trim();
             const now = Date.now();
             if (!value) return;
-            if (lastScanRef.current.value === value && now - lastScanRef.current.time < 1200) return;
+            if (lastScanRef.current.value === value && now - lastScanRef.current.time < 1500) return;
+            
             lastScanRef.current = { value, time: now };
+            setLastScanDisplay(value);
+            setIsFlashing(true);
+            playBeep();
+            setTimeout(() => setIsFlashing(false), 200);
+            
             onScanSuccess(value);
             if (!continuous) onClose();
           },
@@ -69,7 +99,20 @@ export default function QRScanner({ onScanSuccess, onClose, continuous = false }
       </div>
 
       <div className="scanner-body">
-        <div id={SCANNER_ID} className="scanner-view" />
+        <div 
+          id={SCANNER_ID} 
+          className={cn(
+            "scanner-view transition-all duration-200",
+            isFlashing && "ring-4 ring-green-500 ring-inset opacity-70"
+          )} 
+        />
+        
+        {lastScanDisplay && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-1.5 rounded-full text-xs font-mono backdrop-blur-md animate-in fade-in slide-in-from-top-2">
+            {lastScanDisplay}
+          </div>
+        )}
+
         {isStarting && (
           <div className="scanner-loading">
             <RefreshCw className="w-8 h-8 animate-spin" />
